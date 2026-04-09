@@ -1687,29 +1687,50 @@ goTo = function(id) {
 
 window.addEventListener('popstate', function(e) {
   e.preventDefault();
+  // 항상 현재 상태 유지 (브라우저 뒤로가기 막기)
+  for (var _j = 0; _j < 5; _j++) {
+    history.pushState(null, '', location.href);
+  }
+
   // 주차 팝업 열려있으면 먼저 닫기
   var parkingOverlay = document.getElementById('parking-overlay');
   if (parkingOverlay && parkingOverlay.style.display !== 'none') {
     parkingOverlay.style.display = 'none';
-    history.pushState(null, '', location.href);
     return;
   }
+  // confirm 팝업 열려있으면 닫기
+  var confirmOverlay = document.getElementById('confirm-overlay');
+  if (confirmOverlay) { confirmOverlay.remove(); return; }
+  // A ZONE 상세 팝업 열려있으면 닫기
+  var azoneOverlay = document.getElementById('azone-detail-overlay');
+  if (azoneOverlay && azoneOverlay.style.display !== 'none') {
+    azoneOverlay.style.display = 'none';
+    return;
+  }
+  // 홈 화면이면 그냥 무시 (로그인/브라우저로 절대 안 감)
+  if (currentScreen === 'screen-home' || currentScreen === 'screen-login') {
+    return;
+  }
+  // 다른 화면이면 이전 화면으로
   if (screenHistory.length > 1) {
     screenHistory.pop();
     var prev = screenHistory[screenHistory.length-1];
+    // 로그인 화면으로는 절대 안 감
     if (prev === 'screen-login') {
       screenHistory = ['screen-home'];
-      history.pushState(null, '', location.href);
+      _origGoTo('screen-home');
       return;
     }
     stopQR('register'); stopQR('location'); stopQR('discard'); stopQR('qrsearch');
     _origGoTo(prev);
   }
-  history.pushState(null, '', location.href);
 });
 
-// 히스토리 초기 세팅
-history.pushState(null, '', location.href);
+// 히스토리 초기 세팅 - 백버튼으로 앱 종료 방지
+// 여러번 push해서 백버튼 여러번 눌러도 앱 안꺼지게
+for (var _i = 0; _i < 10; _i++) {
+  history.pushState(null, '', location.href);
+}
 
 
 // 폐기 탭 전환
