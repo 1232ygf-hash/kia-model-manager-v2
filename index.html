@@ -65,18 +65,18 @@ body{background:var(--bg);color:var(--text);font-family:'Pretendard',sans-serif;
 
 /* 통계 */
 .stat-wrap{padding:16px 16px 4px;}
-.stat-card{background:var(--card);border-radius:16px;padding:14px 8px;box-shadow:var(--shadow-sm);flex:1;text-align:center;}
-.stat-label{font-size:10px;font-weight:600;letter-spacing:2px;color:var(--sub);text-transform:uppercase;margin-bottom:6px;}
-.stat-num{font-family:'Bebas Neue',sans-serif;font-size:36px;line-height:1;}
+.stat-card{background:var(--card);border-radius:14px;padding:10px 8px;box-shadow:var(--shadow-sm);flex:1;text-align:center;}
+.stat-label{font-size:9px;font-weight:600;letter-spacing:2px;color:var(--sub);text-transform:uppercase;margin-bottom:4px;}
+.stat-num{font-family:'Bebas Neue',sans-serif;font-size:28px;line-height:1;}
 .stat-card.ext .stat-num{color:#6C47FF;}
 .stat-card.int .stat-num{color:#2196F3;}
 .stat-card.total .stat-num{color:#00C2A8;}
-.menu-card{background:var(--card);border-radius:20px;padding:20px 16px;cursor:pointer;box-shadow:var(--shadow-sm);transition:transform 0.15s;position:relative;overflow:hidden;}
+.menu-card{background:var(--card);border-radius:16px;padding:14px 14px;cursor:pointer;box-shadow:var(--shadow-sm);transition:transform 0.15s;position:relative;overflow:hidden;display:flex;flex-direction:column;align-items:flex-start;}
 .menu-card:active{transform:scale(0.97);}
-.menu-icon-wrap{width:52px;height:52px;border-radius:16px;display:flex;align-items:center;justify-content:center;font-size:28px;margin-bottom:12px;}
-.menu-card-title{font-size:14px;font-weight:700;color:var(--text);margin-bottom:3px;}
+.menu-icon-wrap{width:40px;height:40px;border-radius:12px;display:flex;align-items:center;justify-content:center;font-size:22px;margin-bottom:8px;}
+.menu-card-title{font-size:13px;font-weight:700;color:var(--text);margin-bottom:2px;}
 .menu-card-desc{font-size:11px;color:var(--sub);line-height:1.4;}
-.menu-grid{display:grid;grid-template-columns:1fr 1fr;gap:12px;padding:0 16px;}
+.menu-grid{display:grid;grid-template-columns:1fr 1fr;gap:8px;padding:0 16px;}
 .stat-label{font-size:20px;font-weight:500;color:var(--text);font-family:'Pretendard',sans-serif;}
 .stat-num{font-size:36px;font-weight:900;color:var(--text);font-family:'Bebas Neue',sans-serif;}
 
@@ -215,7 +215,7 @@ input[type="date"].form-input-inline{color-scheme:light;text-align:right;}
 /* 토스트 */
 .toast{position:fixed;bottom:34px;left:50%;transform:translateX(-50%) translateY(10px);background:rgba(0,0,0,0.85);color:white;padding:12px 22px;border-radius:24px;font-size:13px;font-weight:500;z-index:9999;opacity:0;transition:all 0.25s;white-space:nowrap;pointer-events:none;backdrop-filter:blur(10px);}
 .toast.show{opacity:1;transform:translateX(-50%) translateY(0);}
-.logout-section{padding:24px 16px 32px;}
+.logout-section{padding:12px 16px 16px;}
 .logout-btn{width:100%;background:var(--card);border:none;border-radius:14px;padding:14px;color:var(--danger);font-family:'Pretendard',sans-serif;font-size:15px;font-weight:500;cursor:pointer;box-shadow:var(--shadow-sm);}
 ::-webkit-scrollbar{width:4px;}
 ::-webkit-scrollbar-track{background:transparent;}
@@ -264,10 +264,10 @@ input[type="date"].form-input-inline{color-scheme:light;text-align:right;}
 <!-- 홈 -->
 <div id="screen-home" class="screen">
   <div class="home-header" style="padding:14px 16px 12px;display:flex;align-items:center;justify-content:space-between;">
-    <span style="font-family:'Bebas Neue',sans-serif;font-size:16px;letter-spacing:0.5px;color:var(--text);white-space:nowrap;font-weight:900;">KIA DESIGN MODEL MANAGER</span>
+    <span style="font-family:'Bebas Neue',sans-serif;font-size:18px;letter-spacing:0.5px;color:var(--text);white-space:nowrap;font-weight:900;">KIA DESIGN MODEL MANAGER</span>
     <button id="gear-btn" onclick="goTo('screen-account')" style="display:none;background:var(--fill);border:none;width:36px;height:36px;border-radius:10px;font-size:16px;cursor:pointer;">⚙️</button>
   </div>
-  <div class="stat-wrap" style="display:flex;gap:10px;padding:16px 16px 4px;">
+  <div class="stat-wrap" style="display:flex;gap:8px;padding:10px 16px 4px;">
     <div class="stat-card ext">
       <div class="stat-label">EXT</div>
       <div class="stat-num" id="stat-ext">0</div>
@@ -283,7 +283,7 @@ input[type="date"].form-input-inline{color-scheme:light;text-align:right;}
   </div>
   <!-- Admin Only -->
   <div id="admin-section" style="display:none;">
-    <div class="section-label" style="padding:20px 20px 10px;">ADMIN ONLY</div>
+    <div class="section-label" style="padding:12px 20px 8px;">ADMIN ONLY</div>
     <div class="menu-grid">
       <div class="menu-card" onclick="openQR('register')">
         <div class="menu-icon-wrap" style="background:rgba(108,71,255,0.1);">➕</div>
@@ -300,9 +300,9 @@ input[type="date"].form-input-inline{color-scheme:light;text-align:right;}
 
   <!-- General -->
   <div>
-    <div class="section-label" style="padding:20px 20px 10px;">GENERAL</div>
+    <div class="section-label" style="padding:12px 20px 8px;">GENERAL</div>
     <div class="menu-grid">
-      <div id="menu-row-location" class="menu-card" onclick="openQR('location')">
+      <div id="menu-row-location" class="menu-card" onclick="openQR('location')" style="display:block;">
         <div class="menu-icon-wrap" style="background:rgba(33,150,243,0.1);">📍</div>
         <div class="menu-card-title">위치 등록</div>
         <div class="menu-card-desc">QR 스캔 후 위치 지정</div>
@@ -313,7 +313,7 @@ input[type="date"].form-input-inline{color-scheme:light;text-align:right;}
         <div class="menu-card-desc">검색 및 구역별 현황</div>
       </div>
     </div>
-    <div style="padding:12px 16px 0;">
+    <div style="padding:8px 16px 0;">
       <div class="menu-card" onclick="openQR('qrsearch')" style="text-align:center;">
         <div class="menu-icon-wrap" style="background:rgba(255,149,0,0.1);margin:0 auto 12px;">📷</div>
         <div class="menu-card-title">QR 검색</div>
