@@ -1820,8 +1820,7 @@ function updateDiscardMultiBar() {
 }
 
 function confirmMultiDiscard() {
-  var selected = window._discardSelected || {};
-  var keys = Object.keys(selected);
+  var keys = Object.keys(selectedDiscardQRs || {});
   if(keys.length===0){showToast('❌ 선택된 모델이 없습니다');return;}
   showConfirm('⚠️ '+keys.length+'개 모델을\n정말 폐기하시겠습니까?', function(){
     _setProcessing(true);
@@ -1836,7 +1835,7 @@ function confirmMultiDiscard() {
     Promise.all(promises).then(function(){
       _setProcessing(false);
       showToast('✅ '+keys.length+'개 폐기 처리 완료');
-      window._discardSelected={};
+      selectedDiscardQRs={};
       var bar=document.getElementById('discard-multi-bar');if(bar)bar.style.display='none';
       document.getElementById('discard-search-results').innerHTML='';
       document.getElementById('discard-search-input').value='';
