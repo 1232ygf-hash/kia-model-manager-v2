@@ -65,7 +65,18 @@ body{background:var(--bg);color:var(--text);font-family:'Pretendard',sans-serif;
 
 /* 통계 */
 .stat-wrap{padding:16px 16px 4px;}
-.stat-card{background:var(--card);border-radius:16px;padding:18px 24px;box-shadow:var(--shadow-sm);display:flex;align-items:center;justify-content:space-between;}
+.stat-card{background:var(--card);border-radius:16px;padding:14px 8px;box-shadow:var(--shadow-sm);flex:1;text-align:center;}
+.stat-label{font-size:10px;font-weight:600;letter-spacing:2px;color:var(--sub);text-transform:uppercase;margin-bottom:6px;}
+.stat-num{font-family:'Bebas Neue',sans-serif;font-size:36px;line-height:1;}
+.stat-card.ext .stat-num{color:#6C47FF;}
+.stat-card.int .stat-num{color:#2196F3;}
+.stat-card.total .stat-num{color:#00C2A8;}
+.menu-card{background:var(--card);border-radius:20px;padding:20px 16px;cursor:pointer;box-shadow:var(--shadow-sm);transition:transform 0.15s;position:relative;overflow:hidden;}
+.menu-card:active{transform:scale(0.97);}
+.menu-icon-wrap{width:52px;height:52px;border-radius:16px;display:flex;align-items:center;justify-content:center;font-size:28px;margin-bottom:12px;}
+.menu-card-title{font-size:14px;font-weight:700;color:var(--text);margin-bottom:3px;}
+.menu-card-desc{font-size:11px;color:var(--sub);line-height:1.4;}
+.menu-grid{display:grid;grid-template-columns:1fr 1fr;gap:12px;padding:0 16px;}
 .stat-label{font-size:20px;font-weight:500;color:var(--text);font-family:'Pretendard',sans-serif;}
 .stat-num{font-size:36px;font-weight:900;color:var(--text);font-family:'Bebas Neue',sans-serif;}
 
@@ -252,71 +263,61 @@ input[type="date"].form-input-inline{color-scheme:light;text-align:right;}
 
 <!-- 홈 -->
 <div id="screen-home" class="screen">
-  <div class="home-header" style="padding:12px 16px 10px;display:flex;align-items:center;justify-content:space-between;">
-    <div style="font-size:18px;font-weight:300;color:var(--sub);font-family:'Pretendard',sans-serif;letter-spacing:-0.5px;margin-left:-2px;">KIA Design Model Manager</div>
-    <div style="display:flex;align-items:center;gap:8px;">
-      <span style="font-size:11px;color:var(--sub);display:flex;align-items:center;gap:3px;"><span id="rt-dot" style="width:7px;height:7px;border-radius:50%;background:#C7C7CC;display:inline-block;"></span><span id="rt-text">연결중</span></span>
-      <button id="gear-btn" onclick="goTo('screen-account')" style="display:none;background:none;border:none;font-size:15px;cursor:pointer;padding:0;">⚙️</button>
+  <div class="home-header" style="padding:14px 16px 12px;display:flex;align-items:center;justify-content:space-between;">
+    <span style="font-family:'Bebas Neue',sans-serif;font-size:16px;letter-spacing:0.5px;color:var(--text);white-space:nowrap;font-weight:900;">KIA DESIGN MODEL MANAGER</span>
+    <button id="gear-btn" onclick="goTo('screen-account')" style="display:none;background:var(--fill);border:none;width:36px;height:36px;border-radius:10px;font-size:16px;cursor:pointer;">⚙️</button>
+  </div>
+  <div class="stat-wrap" style="display:flex;gap:10px;padding:16px 16px 4px;">
+    <div class="stat-card ext">
+      <div class="stat-label">EXT</div>
+      <div class="stat-num" id="stat-ext">0</div>
+    </div>
+    <div class="stat-card int">
+      <div class="stat-label">INT</div>
+      <div class="stat-num" id="stat-int">0</div>
+    </div>
+    <div class="stat-card total">
+      <div class="stat-label">Total</div>
+      <div class="stat-num" id="stat-total">0</div>
     </div>
   </div>
-  <div class="stat-wrap" style="display:flex;gap:8px;padding:16px 16px 4px;">
-    <div class="stat-card" style="flex:1;text-align:center;padding:14px 8px;">
-      <div class="stat-label" style="font-size:12px;">EXT</div>
-      <div class="stat-num" id="stat-ext" style="font-size:28px;">0</div>
-    </div>
-    <div class="stat-card" style="flex:1;text-align:center;padding:14px 8px;">
-      <div class="stat-label" style="font-size:12px;">INT</div>
-      <div class="stat-num" id="stat-int" style="font-size:28px;">0</div>
-    </div>
-    <div class="stat-card" style="flex:1;text-align:center;padding:14px 8px;">
-      <div class="stat-label" style="font-size:12px;">총합</div>
-      <div class="stat-num" id="stat-total" style="font-size:28px;">0</div>
-    </div>
-  </div>
-  <div class="menu-section" id="admin-section">
-    <div class="section-label" style="letter-spacing:0.5px;">ADMIN ONLY</div>
-    <div class="menu-group">
-      <div class="menu-row" onclick="openQR('register')">
-        <div class="row-icon black" style="padding:3px;">
-          <svg viewBox="4 4 56 26" fill="#C8A06E" xmlns="http://www.w3.org/2000/svg" width="100%" height="100%">
-            <path d="M6 22 L6 24 Q6 26 8 26 L10 26 Q10 26 10 24 L10 22 Z M54 22 L54 24 Q54 26 56 26 L58 26 Q58 26 58 24 L58 22 Z" fill="#C8A06E"/>
-            <ellipse cx="14" cy="24" rx="4.5" ry="4.5" fill="#5a4020"/>
-            <ellipse cx="14" cy="24" rx="2" ry="2" fill="#C8A06E"/>
-            <ellipse cx="50" cy="24" rx="4.5" ry="4.5" fill="#5a4020"/>
-            <ellipse cx="50" cy="24" rx="2" ry="2" fill="#C8A06E"/>
-            <path d="M4 22 Q4 14 10 12 L22 8 Q26 6 32 6 L42 6 Q50 6 56 10 L60 14 Q62 16 62 20 L62 22 Z" fill="#C8A06E"/>
-            <path d="M12 12 L22 8 Q26 6.5 30 6.5 L40 6.5 Q46 6.5 52 10 L58 14" stroke="#8B5E2A" stroke-width="1.2" fill="none"/>
-            <line x1="30" y1="6.5" x2="28" y2="13" stroke="#8B5E2A" stroke-width="1"/>
-            <line x1="42" y1="6.5" x2="46" y2="13" stroke="#8B5E2A" stroke-width="1"/>
-          </svg>
-        </div>
-        <div class="row-text"><div class="row-title">디자인 모델 등록</div><div class="row-desc">QR 스캔 후 신규 디자인 모델 등록</div></div>
-        <div class="row-chevron">›</div>
+  <!-- Admin Only -->
+  <div id="admin-section" style="display:none;">
+    <div class="section-label" style="padding:20px 20px 10px;">ADMIN ONLY</div>
+    <div class="menu-grid">
+      <div class="menu-card" onclick="openQR('register')">
+        <div class="menu-icon-wrap" style="background:rgba(108,71,255,0.1);">➕</div>
+        <div class="menu-card-title">디자인 모델 등록</div>
+        <div class="menu-card-desc">QR 스캔 후 신규 등록</div>
       </div>
-      <div class="menu-row" onclick="openQR('discard')">
-        <div class="row-icon gray">🗑</div>
-        <div class="row-text"><div class="row-title">디자인 모델 폐기</div><div class="row-desc">QR 스캔 후 디자인 디자인 모델 폐기 처리</div></div>
-        <div class="row-chevron">›</div>
+      <div class="menu-card" onclick="openQR('discard')">
+        <div class="menu-icon-wrap" style="background:rgba(255,71,71,0.1);">🗑</div>
+        <div class="menu-card-title">디자인 모델 폐기</div>
+        <div class="menu-card-desc">QR 스캔 후 폐기 처리</div>
       </div>
     </div>
   </div>
-  <div class="menu-section">
-    <div class="section-label" style="letter-spacing:0.5px;">GENERAL</div>
-    <div class="menu-group">
-      <div id="menu-row-location" class="menu-row" onclick="openQR('location')">
-        <div class="row-icon blue">📍</div>
-        <div class="row-text"><div class="row-title">디자인 모델 위치 등록</div><div class="row-desc">QR 스캔 후 보관 위치 지정</div></div>
-        <div class="row-chevron">›</div>
+
+  <!-- General -->
+  <div>
+    <div class="section-label" style="padding:20px 20px 10px;">GENERAL</div>
+    <div class="menu-grid">
+      <div id="menu-row-location" class="menu-card" onclick="openQR('location')">
+        <div class="menu-icon-wrap" style="background:rgba(33,150,243,0.1);">📍</div>
+        <div class="menu-card-title">위치 등록</div>
+        <div class="menu-card-desc">QR 스캔 후 위치 지정</div>
       </div>
-      <div class="menu-row" onclick="enterSearch()">
-        <div class="row-icon green">🔍</div>
-        <div class="row-text"><div class="row-title">디자인 모델 검색</div><div class="row-desc">검색 및 구역별 현황 보기</div></div>
-        <div class="row-chevron">›</div>
+      <div class="menu-card" onclick="enterSearch()">
+        <div class="menu-icon-wrap" style="background:rgba(0,194,168,0.1);">🔍</div>
+        <div class="menu-card-title">모델 검색</div>
+        <div class="menu-card-desc">검색 및 구역별 현황</div>
       </div>
-      <div class="menu-row" onclick="openQR('qrsearch')">
-        <div class="row-icon black">📷</div>
-        <div class="row-text"><div class="row-title">디자인 모델 QR 검색</div><div class="row-desc">QR 스캔으로 모델 정보 즉시 조회</div></div>
-        <div class="row-chevron">›</div>
+    </div>
+    <div style="padding:12px 16px 0;">
+      <div class="menu-card" onclick="openQR('qrsearch')" style="text-align:center;">
+        <div class="menu-icon-wrap" style="background:rgba(255,149,0,0.1);margin:0 auto 12px;">📷</div>
+        <div class="menu-card-title">QR 검색</div>
+        <div class="menu-card-desc">QR 스캔으로 모델 정보 즉시 조회</div>
       </div>
     </div>
   </div>
