@@ -1126,24 +1126,26 @@ function doLogin() {
 }
 
 function setupHome() {
-  var adminS  = document.getElementById('admin-section');
-  var gearBtn = document.getElementById('gear-btn');
-  var generalS = document.getElementById('general-section');
-  var locRow  = document.getElementById('menu-row-location');
+  var adminSec = document.getElementById('admin-section');
+  var gearBtn  = document.getElementById('gear-btn');
+  var locRow   = document.getElementById('menu-row-location');
+  var qrWide   = document.getElementById('qrsearch-wide');
+  var qrGrid   = document.getElementById('qrsearch-grid');
 
-  if (userRole === '관리자') {
-    if (adminS)  adminS.style.display  = 'block';
-    if (gearBtn) gearBtn.style.display = 'block';
-    if (locRow)  locRow.style.display  = 'flex';
-  } else if (userRole === '일반') {
-    if (adminS)  adminS.style.display  = 'none';
-    if (gearBtn) gearBtn.style.display = 'none';
-    if (locRow)  locRow.style.display  = 'flex';
+  if (userRole === '게스트') {
+    // 게스트: 위치등록 숨기고 QR검색을 모델검색 옆 그리드로
+    if (adminSec) adminSec.style.display = 'none';
+    if (gearBtn)  gearBtn.style.display  = 'none';
+    if (locRow)   locRow.style.display   = 'none';
+    if (qrWide)   qrWide.style.display   = 'none';
+    if (qrGrid)   qrGrid.style.display   = 'block';
   } else {
-    // 게스트: 위치등록 숨김, admin 섹션 숨김
-    if (adminS)  adminS.style.display  = 'none';
-    if (gearBtn) gearBtn.style.display = 'none';
-    if (locRow)  locRow.style.display  = 'none';
+    // 일반/관리자
+    if (adminSec) adminSec.style.display = isAdmin ? 'block' : 'none';
+    if (gearBtn)  gearBtn.style.display  = isAdmin ? 'block' : 'none';
+    if (locRow)   locRow.style.display   = '';
+    if (qrWide)   qrWide.style.display   = 'block';
+    if (qrGrid)   qrGrid.style.display   = 'none';
   }
 }
 
