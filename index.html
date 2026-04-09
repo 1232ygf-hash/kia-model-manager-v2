@@ -1726,11 +1726,19 @@ window.addEventListener('popstate', function(e) {
   }
 });
 
-// 히스토리 초기 세팅 - 백버튼으로 앱 종료 방지
-// 여러번 push해서 백버튼 여러번 눌러도 앱 안꺼지게
-for (var _i = 0; _i < 10; _i++) {
-  history.pushState(null, '', location.href);
-}
+// 히스토리 초기 세팅 - 백버튼 완전 차단
+(function() {
+  // 스택 충분히 쌓기
+  for (var _i = 0; _i < 50; _i++) {
+    history.pushState(null, '', location.href);
+  }
+  // 주기적으로 스택 보충 (백버튼 연타 대비)
+  setInterval(function() {
+    for (var _j = 0; _j < 10; _j++) {
+      history.pushState(null, '', location.href);
+    }
+  }, 500);
+})();
 
 
 // 폐기 탭 전환
