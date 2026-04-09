@@ -2195,6 +2195,7 @@ function closeParkingOverlay(e) {
 }
 
 function confirmParkingSpot() {
+  if (!scannedQR.location) { showToast('❌ QR 코드를 먼저 스캔해주세요'); document.getElementById('parking-overlay').style.display='none'; return; }
   if (!_parkingSpot) { showToast('❌ 구역을 선택해주세요'); return; }
   var full = _parkingZone + ' ' + _parkingSpot;
   if (_parkingZone === '지하 A ZONE' && typeof MODELS !== 'undefined' && MODELS && MODELS.length > 0) {
