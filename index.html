@@ -785,7 +785,15 @@ function openQR(mode) {
     var disVal = document.getElementById('dis-qr-val');
     if(disVal) disVal.textContent='QR 코드를 스캔하세요';
     var disBtn = document.getElementById('discard-btn');
-    if(disBtn){ disBtn.textContent='🗑 폐기 처리'; disBtn.disabled=false; }
+    if(disBtn){ disBtn.textContent='🗑 폐기 처리'; disBtn.disabled=false; disBtn.style.display='none'; }
+    // 검색 탭 초기화
+    var disSearchInput = document.getElementById('discard-search-input');
+    var disSearchResults = document.getElementById('discard-search-results');
+    var disMultiBar = document.getElementById('discard-multi-bar');
+    if(disSearchInput) disSearchInput.value = '';
+    if(disSearchResults) disSearchResults.innerHTML = '';
+    if(disMultiBar) disMultiBar.style.display = 'none';
+    selectedDiscardQRs = {};
     goTo('screen-discard');
   }
   else if(mode==='qrsearch') goTo('screen-qrsearch');
