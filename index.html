@@ -301,8 +301,9 @@ input[type="date"].form-input-inline{color-scheme:light;text-align:right;}
   <!-- General -->
   <div>
     <div class="section-label" style="padding:12px 20px 8px;">GENERAL</div>
-    <div class="menu-grid">
-      <div id="menu-row-location" class="menu-card" onclick="openQR('location')" style="display:block;">
+    <!-- 위치등록 + 모델검색 (게스트는 위치등록 숨김) -->
+    <div class="menu-grid" id="general-grid">
+      <div id="menu-row-location" class="menu-card" onclick="openQR('location')">
         <div class="menu-icon-wrap" style="background:rgba(33,150,243,0.1);">📍</div>
         <div class="menu-card-title">위치 등록</div>
         <div class="menu-card-desc">QR 스캔 후 위치 지정</div>
@@ -313,13 +314,21 @@ input[type="date"].form-input-inline{color-scheme:light;text-align:right;}
         <div class="menu-card-desc">검색 및 구역별 현황</div>
       </div>
     </div>
-    <div style="padding:8px 16px 0;">
+    <!-- QR 검색 (일반/관리자: 와이드 / 게스트: 2열 그리드에 포함) -->
+    <div id="qrsearch-wide" style="padding:8px 16px 0;">
       <div class="menu-card" onclick="openQR('qrsearch')" style="align-items:center;width:100%;padding:16px;">
         <div class="menu-icon-wrap" style="background:rgba(255,149,0,0.1);margin:0 auto 8px;">📷</div>
         <div style="text-align:center;width:100%;">
           <div class="menu-card-title">QR 검색</div>
           <div class="menu-card-desc">QR 스캔으로 모델 정보 즉시 조회</div>
         </div>
+      </div>
+    </div>
+    <div id="qrsearch-grid" style="display:none;padding:8px 16px 0;">
+      <div class="menu-card" onclick="openQR('qrsearch')">
+        <div class="menu-icon-wrap" style="background:rgba(255,149,0,0.1);">📷</div>
+        <div class="menu-card-title">QR 검색</div>
+        <div class="menu-card-desc">QR 스캔으로 즉시 조회</div>
       </div>
     </div>
   </div>
