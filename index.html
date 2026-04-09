@@ -639,105 +639,6 @@ function unsubscribeModels() {
 }
 // ────────────────────────────────────────────────────────
 
-// ── 모델 캐시 헬퍼 ──────────────────────────────────────
-var _MODELS_CACHE_KEY = 'kia_models_cache';
-var _MODELS_CACHE_TS_KEY = 'kia_models_cache_ts';
-var _MODELS_CACHE_TTL = 5 * 60 * 1000; // 5분
-
-function _saveModelsCache(models) {
-  try {
-    localStorage.setItem(_MODELS_CACHE_KEY, JSON.stringify(models));
-    localStorage.setItem(_MODELS_CACHE_TS_KEY, Date.now().toString());
-  } catch(e) {}
-}
-
-function _loadModelsCache() {
-  try {
-    var ts = parseInt(localStorage.getItem(_MODELS_CACHE_TS_KEY) || '0');
-    if (Date.now() - ts > _MODELS_CACHE_TTL) return null;
-    var raw = localStorage.getItem(_MODELS_CACHE_KEY);
-    return raw ? JSON.parse(raw) : null;
-  } catch(e) { return null; }
-}
-
-function _clearModelsCache() {
-  localStorage.removeItem(_MODELS_CACHE_KEY);
-  localStorage.removeItem(_MODELS_CACHE_TS_KEY);
-}
-
-// GAS 웜업 (콜드스타트 방지 - 앱 로드 시 ping)
-function _warmupGAS() {
-  var cbName = '_gasCb_warmup_' + Date.now();
-  var url = GAS_URL + '?func=ping&params=[]&callback=' + cbName;
-  var s = document.createElement('script');
-  var t = setTimeout(function(){ delete window[cbName]; if(s.parentNode)s.parentNode.removeChild(s); }, 8000);
-  window[cbName] = function(){ clearTimeout(t); delete window[cbName]; if(s.parentNode)s.parentNode.removeChild(s); };
-  s.onerror = function(){ clearTimeout(t); delete window[cbName]; };
-  s.src = url;
-  document.head.appendChild(s);
-}
-// ────────────────────────────────────────────────────────
-
-// JSONP로 GAS 호출 (CORS 우회)
-function _gasCall(funcName, args, onSuccess, onFail, _retryCount) {
-  var retry = _retryCount || 0;
-  var maxRetry = 2; // 최대 2회 재시도
-  var cbName = '_gasCb_' + funcName + '_' + Date.now();
-  var url = GAS_URL + '?func=' + encodeURIComponent(funcName) +
-    '&params=' + encodeURIComponent(JSON.stringify(args)) +
-    '&callback=' + cbName;
-  var script = document.createElement('script');
-  var timer = setTimeout(function() {
-    delete window[cbName];
-    if (script.parentNode) script.parentNode.removeChild(script);
-    if (retry < maxRetry) {
-      setTimeout(function() { _gasCall(funcName, args, onSuccess, onFail, retry + 1); }, 1000);
-    } else {
-      if (onFail) onFail(new Error('timeout'));
-    }
-  }, 15000);
-  window[cbName] = function(data) {
-    clearTimeout(timer);
-    delete window[cbName];
-    if (script.parentNode) script.parentNode.removeChild(script);
-    if (onSuccess) onSuccess(data);
-  };
-  script.onerror = function() {
-    clearTimeout(timer);
-    delete window[cbName];
-    if (onFail) onFail(new Error('script load error'));
-  };
-  script.src = url;
-  document.head.appendChild(script);
-};
-
-// google.script.run 호환 인터페이스
-var google = { script: { run: null } };
-
-(function() {
-  var funcs = ['login','registerModel','updateModel','updateLocation','discardModel',
-    'getModelByQR','getAllModels','getStats','getAccounts','updateAccounts'];
-  
-  var base = {
-    _s: null, _f: null,
-    withSuccessHandler: function(fn) {
-      return Object.assign(Object.create(base), {_s: fn, _f: this._f});
-    },
-    withFailureHandler: function(fn) {
-      return Object.assign(Object.create(base), {_s: this._s, _f: fn});
-    }
-  };
-  
-  funcs.forEach(function(name) {
-    base[name] = function() {
-      var args = Array.prototype.slice.call(arguments);
-      var s = this._s, f = this._f;
-      _gasCall(name, args, s, f);
-    };
-  });
-  
-  google.script.run = Object.create(base);
-})();
 
 
 var LOCATIONS = [
@@ -768,7 +669,7 @@ function _setProcessing(on) {
   if (msg) msg.textContent = on ? '처리 중... 잠시만 기다려주세요' : '처리중...';
 }
 function fetchRegisteredQRs(cb){ cb(MODELS.map(function(m){return m.qrId;})); }
-function invalidateQRCache(){_qrCache=null;_clearModelsCache();MODELS=[];}
+function invalidateQRCache(){_qrCache=null;} // Firebase 실시간 구독으로 자동 갱신
 // 날짜포맷
 function formatDate(v){if(!v)return '-';var s=String(v);if(s.indexOf('T')!==-1)return s.split('T')[0];return s.length>10?s.substring(0,10):s;}
 // 카메라 권한 미리요청
@@ -1429,10 +1330,7 @@ function buildZoneView(models) {
 function showZoneDetail(zone, models) {
   // 지하 A ZONE → 항상 최신 데이터로 파킹 그리드 뷰
   if (zone === '지하 A ZONE') {
-    // 캐시 무효화 후 최신 데이터로 그리기
-    _clearModelsCache();
-    // Firebase 실시간 구독으로 항상 최신 데이터
-    showAZoneGrid(MODELS);
+    showAZoneGrid(MODELS); // Firebase 실시간 데이터
     return;
   }
   var title = document.getElementById('zone-detail-title');
