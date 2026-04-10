@@ -453,26 +453,26 @@ input[type="date"].form-input-inline{color-scheme:light;text-align:right;}
         <div style="padding:8px 16px;display:flex;align-items:center;gap:10px;"><span class="qr-id" id="dis-qr-val" style="flex:1;">QR 코드를 스캔하세요</span><span class="qr-status waiting" id="dis-qr-status" style="flex-shrink:0;">대기중</span><button class="camera-flip-btn" onclick="flipCamera()" style="display:none;background:#000;color:#fff;border:none;border-radius:10px;padding:8px 10px;font-size:14px;font-weight:700;cursor:pointer;font-family:'Pretendard',sans-serif;flex-shrink:0;">🔄 전면</button></div>
       </div>
       <div id="discard-info" style="display:none;margin:16px;background:var(--card);border-radius:16px;box-shadow:var(--shadow-sm);overflow:hidden;">
-        <div style="padding:14px 20px;border-bottom:1px solid var(--line);"><div style="font-size:12px;color:var(--sub);">프로젝트명</div><div id="dc-name" style="font-size:15px;font-weight:600;margin-top:2px;"></div></div>
+        <div style="padding:14px 20px;border-bottom:1px solid var(--line);"><div style="font-size:12px;color:var(--sub);" data-i18n="labelProject">프로젝트명</div><div id="dc-name" style="font-size:15px;font-weight:600;margin-top:2px;"></div></div>
         <div style="padding:14px 20px;border-bottom:1px solid var(--line);display:flex;gap:20px;">
-          <div style="flex:1;"><div style="font-size:12px;color:var(--sub);">프로젝트 단계</div><div id="dc-stage" style="font-size:15px;font-weight:600;margin-top:2px;"></div></div>
-          <div style="flex:1;"><div style="font-size:12px;color:var(--sub);">타입</div><div id="dc-type" style="font-size:15px;font-weight:600;margin-top:2px;"></div></div>
-          <div style="flex:1;"><div style="font-size:12px;color:var(--sub);">소재</div><div id="dc-material" style="font-size:15px;font-weight:600;margin-top:2px;"></div></div>
-          <div style="flex:1;"><div style="font-size:12px;color:var(--sub);">제작회사</div><div id="dc-company" style="font-size:15px;font-weight:600;margin-top:2px;"></div></div>
+          <div style="flex:1;"><div style="font-size:12px;color:var(--sub);" data-i18n="labelStage">프로젝트 단계</div><div id="dc-stage" style="font-size:15px;font-weight:600;margin-top:2px;"></div></div>
+          <div style="flex:1;"><div style="font-size:12px;color:var(--sub);" data-i18n="labelType">타입</div><div id="dc-type" style="font-size:15px;font-weight:600;margin-top:2px;"></div></div>
+          <div style="flex:1;"><div style="font-size:12px;color:var(--sub);" data-i18n="labelMaterial">소재</div><div id="dc-material" style="font-size:15px;font-weight:600;margin-top:2px;"></div></div>
+          <div style="flex:1;"><div style="font-size:12px;color:var(--sub);" data-i18n="labelMaker">제작회사</div><div id="dc-company" style="font-size:15px;font-weight:600;margin-top:2px;"></div></div>
         </div>
-        <div style="padding:14px 20px;border-bottom:1px solid var(--line);"><div style="font-size:12px;color:var(--sub);">현재위치</div><div id="dc-loc" style="font-size:15px;font-weight:600;margin-top:2px;"></div></div>
-        <div style="padding:14px 20px;"><div style="font-size:12px;color:var(--sub);">품평일자</div><div id="dc-date" style="font-size:15px;font-weight:600;margin-top:2px;"></div></div>
+        <div style="padding:14px 20px;border-bottom:1px solid var(--line);"><div style="font-size:12px;color:var(--sub);" data-i18n="labelLocation">현재위치</div><div id="dc-loc" style="font-size:15px;font-weight:600;margin-top:2px;"></div></div>
+        <div style="padding:14px 20px;"><div style="font-size:12px;color:var(--sub);" data-i18n="labelDate">품평일자</div><div id="dc-date" style="font-size:15px;font-weight:600;margin-top:2px;"></div></div>
       </div>
       <div class="btn-section" style="padding:0 16px;">
         <button id="discard-btn" class="submit-btn danger" onclick="confirmDiscard()" style="display:none;">🗑 폐기 처리</button>
-        <button class="cancel-btn" onclick="stopQR('discard');goTo('screen-home')">취소</button>
+        <button class="cancel-btn" data-i18n="cancelBtn" onclick="stopQR('discard');goTo('screen-home')">취소</button>
       </div>
     </div>
 
     <!-- 검색 탭 -->
     <div id="discard-search-tab" style="display:none;">
       <div style="padding:16px;">
-        <div style="background:var(--card);border-radius:16px;padding:12px 16px;box-shadow:0 1px 4px rgba(0,0,0,0.08);display:flex;align-items:center;gap:10px;"><input id="discard-search-input" type="text" placeholder="프로젝트명 입력" style="flex:1;border:none;background:#F2F2F2;border-radius:10px;padding:10px 14px;font-size:15px;font-family:'Pretendard',sans-serif;color:#000;outline:none;min-width:0;" onkeydown="if(event.key==='Enter')doDiscardSearch()"><button onclick="doDiscardSearch()" style="background:#444;color:#fff;border:none;border-radius:8px;padding:7px 18px;font-size:13px;font-weight:600;cursor:pointer;font-family:'Pretendard',sans-serif;white-space:nowrap;flex-shrink:0;">검색</button>
+        <div style="background:var(--card);border-radius:16px;padding:12px 16px;box-shadow:0 1px 4px rgba(0,0,0,0.08);display:flex;align-items:center;gap:10px;"><input id="discard-search-input" type="text" data-i18n-placeholder="discardSearchPlaceholder" placeholder="프로젝트명 입력" style="flex:1;border:none;background:#F2F2F2;border-radius:10px;padding:10px 14px;font-size:15px;font-family:'Pretendard',sans-serif;color:#000;outline:none;min-width:0;" onkeydown="if(event.key==='Enter')doDiscardSearch()"><button onclick="doDiscardSearch()" data-i18n="discardSearchBtn" style="background:#444;color:#fff;border:none;border-radius:8px;padding:7px 18px;font-size:13px;font-weight:600;cursor:pointer;font-family:'Pretendard',sans-serif;white-space:nowrap;flex-shrink:0;">검색</button>
         </div>
       </div>
       <!-- 검색 결과 -->
@@ -485,7 +485,7 @@ input[type="date"].form-input-inline{color-scheme:light;text-align:right;}
       </div>
 
       <div class="btn-section" style="padding:0 16px;">
-        <button class="cancel-btn" onclick="goTo('screen-home')">취소</button>
+        <button class="cancel-btn" data-i18n="cancelBtn" onclick="goTo('screen-home')">취소</button>
       </div>
     </div>
 
@@ -501,12 +501,12 @@ input[type="date"].form-input-inline{color-scheme:light;text-align:right;}
   </div>
   <div class="content">
     <div class="search-wrap">
-      <div style="background:#fff;border-radius:16px;padding:12px 16px;box-shadow:0 1px 4px rgba(0,0,0,0.08);display:flex;align-items:center;gap:10px;margin-bottom:14px;"><input type="text" placeholder="프로젝트명 검색..." id="search-input" onkeydown="if(event.key==='Enter')doSearch()" style="flex:1;border:none;background:#F2F2F2;border-radius:10px;padding:10px 14px;font-size:15px;font-family:'Pretendard',sans-serif;color:#000;outline:none;min-width:0;"><button id="search-btn" onclick="doSearch()" style="background:#444;color:#fff;border:none;border-radius:8px;padding:10px 16px;font-size:13px;font-weight:600;cursor:pointer;font-family:'Pretendard',sans-serif;white-space:nowrap;flex-shrink:0;">검색</button></div>
+      <div style="background:#fff;border-radius:16px;padding:12px 16px;box-shadow:0 1px 4px rgba(0,0,0,0.08);display:flex;align-items:center;gap:10px;margin-bottom:14px;"><input type="text" data-i18n-placeholder="searchPlaceholder" placeholder="프로젝트명 검색..." id="search-input" onkeydown="if(event.key==='Enter')doSearch()" style="flex:1;border:none;background:#F2F2F2;border-radius:10px;padding:10px 14px;font-size:15px;font-family:'Pretendard',sans-serif;color:#000;outline:none;min-width:0;"><button id="search-btn" onclick="doSearch()" data-i18n="searchBtn" style="background:#444;color:#fff;border:none;border-radius:8px;padding:10px 16px;font-size:13px;font-weight:600;cursor:pointer;font-family:'Pretendard',sans-serif;white-space:nowrap;flex-shrink:0;">검색</button></div>
       <div class="filter-row">
-        <button class="filter-chip active" onclick="setFilter(this,'all')">전체</button>
+        <button class="filter-chip active" onclick="setFilter(this,'all')" data-i18n="filterAll">전체</button>
         <button class="filter-chip" onclick="setFilter(this,'ext')">EXT</button>
         <button class="filter-chip" onclick="setFilter(this,'int')">INT</button>
-        <button class="filter-chip" onclick="setFilter(this,'zone')">구역별 현황</button>
+        <button class="filter-chip" onclick="setFilter(this,'zone')" data-i18n="filterZone">구역별 현황</button>
       </div>
     </div>
     <div id="count-bar" style="display:none;padding:0 16px 8px;"></div>
@@ -514,8 +514,8 @@ input[type="date"].form-input-inline{color-scheme:light;text-align:right;}
       <div style="text-align:center;padding:48px 20px;color:#C7C7CC;font-size:14px;"><div style="font-size:40px;margin-bottom:12px;">📭</div>등록된 모델이 없습니다</div>
     </div>
     <div id="zone-export-bar" style="display:none;padding:0 16px 12px;">
-      <button onclick="exportZoneExcel()" style="width:100%;background:#000;color:#fff;border:none;border-radius:14px;padding:14px;font-family:'Pretendard',sans-serif;font-size:15px;font-weight:700;cursor:pointer;display:flex;align-items:center;justify-content:center;gap:8px;">
-        <span style="font-size:18px;">📥</span> 구역별 현황 엑셀 내보내기
+      <button onclick="exportZoneExcel()" style="width:100%;background:#000;color:#fff;border:none;border-radius:14px;padding:14px;font-family:'Pretendard',sans-serif;font-size:15px;font-weight:700;cursor:pointer;display:flex;align-items:center;justify-content:center;gap:8px;" data-i18n="excelExport">
+        📥 구역별 현황 엑셀 내보내기
       </button>
     </div>
     <div class="zone-wrap" id="zone-view" style="display:none;"></div>
@@ -541,22 +541,22 @@ input[type="date"].form-input-inline{color-scheme:light;text-align:right;}
         </div>
       </div>
       <div id="qrsearch-result" style="display:none;background:var(--card);border-radius:16px;box-shadow:var(--shadow-sm);overflow:hidden;margin-top:16px;">
-        <div id="qs-header" style="padding:12px 20px;background:var(--fill);border-bottom:1px solid var(--line);font-size:13px;font-weight:600;color:var(--sub);">조회 결과</div>
-        <div id="qs-discard-banner" style="display:none;padding:14px 20px;background:#FFEBEE;border-bottom:1px solid #FFCDD2;"><div style="display:flex;align-items:center;gap:8px;"><span style="font-size:20px;">⛔</span><div><div style="font-size:14px;font-weight:700;color:#C62828;">폐기된 모델입니다</div><div style="font-size:12px;color:#E53935;margin-top:2px;">이 QR코드는 폐기 처리된 디자인 모델입니다</div></div></div></div>
-        <div style="padding:14px 20px;border-bottom:1px solid var(--line);"><div style="font-size:12px;color:var(--sub);">QR코드</div><div id="qs-qrid" style="font-size:15px;font-weight:600;margin-top:2px;"></div></div>
-        <div style="padding:14px 20px;border-bottom:1px solid var(--line);"><div style="font-size:12px;color:var(--sub);">프로젝트명</div><div id="qs-project" style="font-size:15px;font-weight:600;margin-top:2px;"></div></div>
+        <div id="qs-header" style="padding:12px 20px;background:var(--fill);border-bottom:1px solid var(--line);font-size:13px;font-weight:600;color:var(--sub);" data-i18n="queryResult">조회 결과</div>
+        <div id="qs-discard-banner" style="display:none;padding:14px 20px;background:#FFEBEE;border-bottom:1px solid #FFCDD2;"><div style="display:flex;align-items:center;gap:8px;"><span style="font-size:20px;">⛔</span><div><div style="font-size:14px;font-weight:700;color:#C62828;" data-i18n="discardedBanner">폐기된 모델입니다</div><div style="font-size:12px;color:#E53935;margin-top:2px;" data-i18n="discardedBannerSub">이 QR코드는 폐기 처리된 디자인 모델입니다</div></div></div></div>
+        <div style="padding:14px 20px;border-bottom:1px solid var(--line);"><div style="font-size:12px;color:var(--sub);" data-i18n="labelQRID">QR코드</div><div id="qs-qrid" style="font-size:15px;font-weight:600;margin-top:2px;"></div></div>
+        <div style="padding:14px 20px;border-bottom:1px solid var(--line);"><div style="font-size:12px;color:var(--sub);" data-i18n="labelProject">프로젝트명</div><div id="qs-project" style="font-size:15px;font-weight:600;margin-top:2px;"></div></div>
         <div style="padding:14px 20px;border-bottom:1px solid var(--line);display:flex;gap:20px;">
-          <div style="flex:1;"><div style="font-size:12px;color:var(--sub);">프로젝트 단계</div><div id="qs-stage" style="font-size:15px;font-weight:600;margin-top:2px;"></div></div>
-          <div style="flex:1;"><div style="font-size:12px;color:var(--sub);">타입</div><div id="qs-type" style="font-size:15px;font-weight:600;margin-top:2px;"></div></div>
-          <div style="flex:1;"><div style="font-size:12px;color:var(--sub);">소재</div><div id="qs-material" style="font-size:15px;font-weight:600;margin-top:2px;"></div></div>
+          <div style="flex:1;"><div style="font-size:12px;color:var(--sub);" data-i18n="labelStage">프로젝트 단계</div><div id="qs-stage" style="font-size:15px;font-weight:600;margin-top:2px;"></div></div>
+          <div style="flex:1;"><div style="font-size:12px;color:var(--sub);" data-i18n="labelType">타입</div><div id="qs-type" style="font-size:15px;font-weight:600;margin-top:2px;"></div></div>
+          <div style="flex:1;"><div style="font-size:12px;color:var(--sub);" data-i18n="labelMaterial">소재</div><div id="qs-material" style="font-size:15px;font-weight:600;margin-top:2px;"></div></div>
         </div>
-        <div style="padding:14px 20px;border-bottom:1px solid var(--line);"><div style="font-size:12px;color:var(--sub);">제작회사</div><div id="qs-company" style="font-size:15px;font-weight:600;margin-top:2px;"></div></div>
-        <div style="padding:14px 20px;border-bottom:1px solid var(--line);"><div style="font-size:12px;color:var(--sub);">보관위치</div><div id="qs-location" style="font-size:15px;font-weight:600;margin-top:2px;"></div></div>
-        <div style="padding:14px 20px;border-bottom:1px solid var(--line);"><div style="font-size:12px;color:var(--sub);">상태</div><div id="qs-status-display" style="font-size:15px;font-weight:600;margin-top:2px;"></div></div>
-        <div style="padding:14px 20px;"><div style="font-size:12px;color:var(--sub);">품평일자</div><div id="qs-date" style="font-size:15px;font-weight:600;margin-top:2px;"></div></div>
+        <div style="padding:14px 20px;border-bottom:1px solid var(--line);"><div style="font-size:12px;color:var(--sub);" data-i18n="labelMaker">제작회사</div><div id="qs-company" style="font-size:15px;font-weight:600;margin-top:2px;"></div></div>
+        <div style="padding:14px 20px;border-bottom:1px solid var(--line);"><div style="font-size:12px;color:var(--sub);" data-i18n="labelLocation">보관위치</div><div id="qs-location" style="font-size:15px;font-weight:600;margin-top:2px;"></div></div>
+        <div style="padding:14px 20px;border-bottom:1px solid var(--line);"><div style="font-size:12px;color:var(--sub);" data-i18n="labelStatus">상태</div><div id="qs-status-display" style="font-size:15px;font-weight:600;margin-top:2px;"></div></div>
+        <div style="padding:14px 20px;"><div style="font-size:12px;color:var(--sub);" data-i18n="labelDate">품평일자</div><div id="qs-date" style="font-size:15px;font-weight:600;margin-top:2px;"></div></div>
       </div>
       <div style="padding:16px 0;">
-        <button onclick="stopQR('qrsearch');goTo('screen-home')" style="width:100%;padding:16px;background:var(--card);border:1px solid var(--line);border-radius:16px;font-size:16px;color:var(--sub);cursor:pointer;font-family:'Pretendard',sans-serif;">취소</button>
+        <button onclick="stopQR('qrsearch');goTo('screen-home')" data-i18n="cancelBtn" style="width:100%;padding:16px;background:var(--card);border:1px solid var(--line);border-radius:16px;font-size:16px;color:var(--sub);cursor:pointer;font-family:'Pretendard',sans-serif;">취소</button>
       </div>
     </div>
   </div>
@@ -657,8 +657,8 @@ function subscribeModels() {
     // 검색 화면 자동 갱신
     if (currentScreen === 'screen-search') {
       var activeChip = document.querySelector('.filter-chip.active');
-      var type = activeChip ? activeChip.textContent.trim() : '전체';
-      if (type === '구역별 현황') buildZoneView(MODELS);
+      var type = activeChip ? activeChip.textContent.trim() : _t('filterAll');
+      if (type === _t('filterZone')) buildZoneView(MODELS);
       else renderList(MODELS);
     }
   }, function(err) {
@@ -705,6 +705,24 @@ var _I18N = {
     registerBtn:'디자인 모델 등록', locationBtn:'디자인 모델 위치 등록',
     discardBtn:'🗑 폐기 처리', cancelBtn:'취소',
     tabQR:'📷 QR 스캔', tabSearch:'🔍 모델 검색',
+    // 검색/폐기 화면
+    searchPlaceholder:'프로젝트명 검색...', searchBtn:'검색',
+    discardSearchPlaceholder:'프로젝트명 입력', discardSearchBtn:'검색',
+    filterAll:'전체', filterZone:'구역별 현황',
+    excelExport:'📥 구역별 현황 엑셀 내보내기',
+    searching:'검색 중...', noResults:'검색 결과가 없습니다',
+    errSearchKeyword:'❌ 검색어를 입력해주세요',
+    errNoData:'❌ 불러온 모델 데이터가 없습니다.',
+    // 모델 상세 라벨
+    labelProject:'프로젝트명', labelStage:'프로젝트 단계', labelType:'타입',
+    labelMaterial:'소재', labelMaker:'제작회사', labelLocation:'보관위치',
+    labelStatus:'상태', labelDate:'품평일자', labelQRID:'QR코드',
+    statusStored:'보관중', statusDiscarded:'폐기됨',
+    btnClose:'닫기', btnBack:'← 전체 보기',
+    // 지하/구역
+    discardedBanner:'폐기된 모델입니다',
+    discardedBannerSub:'이 QR코드는 폐기 처리된 디자인 모델입니다',
+    queryResult:'조회 결과',
     // 토스트/확인
     errScanQR:'❌ QR 코드를 스캔해주세요',
     errRequired:'❌ 필수 항목을 입력해주세요',
@@ -746,6 +764,21 @@ var _I18N = {
     registerBtn:'Register Model', locationBtn:'Set Model Location',
     discardBtn:'🗑 Discard', cancelBtn:'Cancel',
     tabQR:'📷 QR Scan', tabSearch:'🔍 Search',
+    searchPlaceholder:'Search project...', searchBtn:'Search',
+    discardSearchPlaceholder:'Enter project name', discardSearchBtn:'Search',
+    filterAll:'All', filterZone:'By Zone',
+    excelExport:'📥 Export Zone Report (Excel)',
+    searching:'Searching...', noResults:'No results found',
+    errSearchKeyword:'❌ Please enter a search term',
+    errNoData:'❌ No model data loaded.',
+    labelProject:'Project', labelStage:'Stage', labelType:'Type',
+    labelMaterial:'Material', labelMaker:'Maker', labelLocation:'Location',
+    labelStatus:'Status', labelDate:'Review Date', labelQRID:'QR Code',
+    statusStored:'In Storage', statusDiscarded:'Discarded',
+    btnClose:'Close', btnBack:'← Back to list',
+    discardedBanner:'This model has been discarded',
+    discardedBannerSub:'This QR code belongs to a discarded design model',
+    queryResult:'Search Result',
     errScanQR:'❌ Please scan a QR code',
     errRequired:'❌ Please fill in all required fields',
     errLocation:'❌ Please select a location',
@@ -809,22 +842,34 @@ function _updateDynamicTexts() {
   if(disVal && !_qr.discard) disVal.textContent = _t('scanQR');
   var disStat = document.getElementById('dis-qr-status');
   if(disStat && disStat.classList.contains('waiting')) disStat.textContent = _t('waiting');
-  // 위치등록 버튼
+  // QR검색 상태
+  var qsVal = document.getElementById('qrsearch-qr-val');
+  if(qsVal && !_qr.qrsearch) qsVal.textContent = _t('scanQR');
+  var qsStat = document.getElementById('qrsearch-qr-status');
+  if(qsStat && qsStat.classList.contains('waiting')) qsStat.textContent = _t('waiting');
+  // 버튼들
   var locBtn = document.getElementById('loc-submit-btn');
   if(locBtn && !locBtn.classList.contains('btn-loading')) locBtn.textContent = _t('locationBtn');
-  // 로그아웃
   var logoutBtn = document.querySelector('.logout-btn');
   if(logoutBtn) logoutBtn.textContent = _t('logout');
+  var searchBtn = document.getElementById('search-btn');
+  if(searchBtn && !searchBtn.classList.contains('btn-loading')) searchBtn.textContent = _t('searchBtn');
   // 카메라 플립 버튼
   document.querySelectorAll('.camera-flip-btn').forEach(function(b){
     if(b.style.display !== 'none') b.textContent = _t('flipFront');
   });
   // 지하 ZONE 버튼
   document.querySelectorAll('.loc-btn').forEach(function(b){
-    if(b.textContent.trim() === '지하 ZONE' || b.textContent.trim() === 'Underground') {
-      b.textContent = _t('underground');
-    }
+    var txt = b.textContent.trim();
+    if(txt === '지하 ZONE' || txt === 'Underground') b.textContent = _t('underground');
   });
+  // placeholder
+  var si = document.getElementById('search-input');
+  if(si) si.placeholder = _t('searchPlaceholder');
+  var dsi = document.getElementById('discard-search-input');
+  if(dsi) dsi.placeholder = _t('discardSearchPlaceholder');
+  var memo = document.getElementById('reg-memo');
+  if(memo) memo.placeholder = _t('memoPlaceholder');
 }
 // ────────────────────────────────────────────────────────
 var LOCATIONS = [
@@ -986,7 +1031,7 @@ function openQR(mode) {
   // 카메라 방향 후면으로 초기화
   cameraFacing = 'environment';
   var flipBtns = document.querySelectorAll('.camera-flip-btn');
-  flipBtns.forEach(function(btn) { btn.textContent = '🔄 전면'; });
+  flipBtns.forEach(function(btn) { btn.textContent = _t('flipFront'); });
   _loadQRLib(function(){
     setTimeout(function(){var ids={register:'qr-reader',location:'qr-reader-loc',discard:'qr-reader-dis',qrsearch:'qr-reader-qrsearch'};startQR(mode,ids[mode]);},300);
   });
@@ -1027,7 +1072,7 @@ function startQR(mode, elementId) {
     cameraFacing = (cameraFacing === 'environment') ? 'user' : 'environment';
     var flipBtns = document.querySelectorAll('.camera-flip-btn');
     flipBtns.forEach(function(btn) {
-      btn.textContent = cameraFacing === 'environment' ? '🔄 전면' : '🔄 후면';
+      btn.textContent = cameraFacing === 'environment' ? _t('flipFront') : _t('flipBack');
     });
     delete qrScanners[mode];
     var html5QrCode2 = new Html5Qrcode(elementId);
@@ -1040,7 +1085,7 @@ function startQR(mode, elementId) {
       // 둘 다 실패 시 원래 방향으로 복귀 + 에러 안내
       cameraFacing = prevFacing;
       flipBtns.forEach(function(btn) {
-        btn.textContent = cameraFacing === 'environment' ? '🔄 전면' : '🔄 후면';
+        btn.textContent = cameraFacing === 'environment' ? _t('flipFront') : _t('flipBack');
       });
       showToast('📷 카메라를 열 수 없습니다. 다른 앱에서 카메라 사용 중인지 확인해주세요.');
     });
@@ -1066,7 +1111,7 @@ function flipCamera() {
   // 버튼 아이콘 업데이트
   var flipBtns = document.querySelectorAll('.camera-flip-btn');
   flipBtns.forEach(function(btn) {
-    btn.textContent = cameraFacing === 'environment' ? '🔄 전면' : '🔄 후면';
+    btn.textContent = cameraFacing === 'environment' ? _t('flipFront') : _t('flipBack');
   });
 
   // 새 카메라로 재시작
@@ -1117,7 +1162,7 @@ function onQRSuccess(mode, text) {
         _e=document.getElementById('qs-location'); if(_e)_e.textContent=m.location||'미등록';
         _e=document.getElementById('qs-date');     if(_e)_e.textContent=formatDate(m.inDate);
         var _statusDisplay = document.getElementById('qs-status-display');
-        if(_statusDisplay){_statusDisplay.textContent=isDiscarded?'폐기됨':(m.status||'보관중');_statusDisplay.style.color=isDiscarded?'var(--danger)':'var(--success)';}
+        if(_statusDisplay){_statusDisplay.textContent=isDiscarded?_t('statusDiscarded'):(m.status==='보관중'?_t('statusStored'):(m.status||_t('statusStored')));_statusDisplay.style.color=isDiscarded?'var(--danger)':'var(--success)';}
         var _banner = document.getElementById('qs-discard-banner');
         if(_banner) _banner.style.display = isDiscarded ? 'block' : 'none';
         if(isDiscarded && _qsStat){_qsStat.textContent='폐기 모델';_qsStat.className='qr-status error';}
@@ -1747,7 +1792,7 @@ function showParkingGrid(zone, models) {
     + 'display:grid;grid-template-columns:repeat('+cols+',1fr);grid-template-rows:repeat('+rows+',1fr);gap:6px;box-sizing:border-box;';
 
   var html = '<div style="padding:10px 12px;display:flex;flex-direction:column;height:100%;box-sizing:border-box;">';
-  html += '<button onclick="showUndergroundZoneList(MODELS)" style="font-size:12px;color:#8E8E93;background:none;border:0.5px solid #C7C7CC;border-radius:20px;padding:4px 12px;cursor:pointer;font-family:\'Pretendard\',sans-serif;margin-bottom:10px;align-self:flex-start;">← 전체 보기</button>';
+  html += '<button onclick="showUndergroundZoneList(MODELS)" style="font-size:12px;color:#8E8E93;background:none;border:0.5px solid #C7C7CC;border-radius:20px;padding:4px 12px;cursor:pointer;font-family:\'Pretendard\',sans-serif;margin-bottom:10px;align-self:flex-start;">'+_t('btnBack')+'</button>';
   html += '<div style="'+wrapStyle+'">';
   html += '<div style="'+innerGridStyle+'">';
 
@@ -1777,18 +1822,18 @@ function showParkingGrid(zone, models) {
   html += '<div style="background:#fff;border-radius:20px 20px 0 0;width:100%;padding:20px 16px 40px;max-height:85vh;overflow-y:auto;">';
   html += '<div style="width:40px;height:4px;background:#E5E5EA;border-radius:2px;margin:0 auto 16px;"></div>';
   html += '<div style="background:#fff;border-radius:16px;overflow:hidden;box-shadow:var(--shadow-sm);margin-bottom:16px;">';
-  html += '<div style="padding:14px 20px;border-bottom:1px solid var(--line);"><div style="font-size:12px;color:var(--sub);">프로젝트명</div><div id="azd-project" style="font-size:15px;font-weight:600;margin-top:2px;"></div></div>';
+  html += '<div style="padding:14px 20px;border-bottom:1px solid var(--line);"><div style="font-size:12px;color:var(--sub);">'+_t('labelProject')+'</div><div id="azd-project" style="font-size:15px;font-weight:600;margin-top:2px;"></div></div>';
   html += '<div style="padding:14px 20px;border-bottom:1px solid var(--line);display:flex;gap:20px;">';
-  html += '<div style="flex:1;"><div style="font-size:12px;color:var(--sub);">프로젝트 단계</div><div id="azd-stage" style="font-size:15px;font-weight:600;margin-top:2px;"></div></div>';
-  html += '<div style="flex:1;"><div style="font-size:12px;color:var(--sub);">타입</div><div id="azd-type" style="font-size:15px;font-weight:600;margin-top:2px;"></div></div>';
-  html += '<div style="flex:1;"><div style="font-size:12px;color:var(--sub);">소재</div><div id="azd-material" style="font-size:15px;font-weight:600;margin-top:2px;"></div></div>';
+  html += '<div style="flex:1;"><div style="font-size:12px;color:var(--sub);">'+_t('labelStage')+'</div><div id="azd-stage" style="font-size:15px;font-weight:600;margin-top:2px;"></div></div>';
+  html += '<div style="flex:1;"><div style="font-size:12px;color:var(--sub);">'+_t('labelType')+'</div><div id="azd-type" style="font-size:15px;font-weight:600;margin-top:2px;"></div></div>';
+  html += '<div style="flex:1;"><div style="font-size:12px;color:var(--sub);">'+_t('labelMaterial')+'</div><div id="azd-material" style="font-size:15px;font-weight:600;margin-top:2px;"></div></div>';
   html += '</div>';
-  html += '<div style="padding:14px 20px;border-bottom:1px solid var(--line);"><div style="font-size:12px;color:var(--sub);">제작회사</div><div id="azd-company" style="font-size:15px;font-weight:600;margin-top:2px;"></div></div>';
-  html += '<div style="padding:14px 20px;border-bottom:1px solid var(--line);"><div style="font-size:12px;color:var(--sub);">보관위치</div><div id="azd-location" style="font-size:15px;font-weight:600;margin-top:2px;"></div></div>';
-  html += '<div style="padding:14px 20px;border-bottom:1px solid var(--line);"><div style="font-size:12px;color:var(--sub);">상태</div><div id="azd-status" style="font-size:15px;font-weight:600;margin-top:2px;color:var(--success);"></div></div>';
-  html += '<div style="padding:14px 20px;"><div style="font-size:12px;color:var(--sub);">품평일자</div><div id="azd-date" style="font-size:15px;font-weight:600;margin-top:2px;"></div></div>';
+  html += '<div style="padding:14px 20px;border-bottom:1px solid var(--line);"><div style="font-size:12px;color:var(--sub);">'+_t('labelMaker')+'</div><div id="azd-company" style="font-size:15px;font-weight:600;margin-top:2px;"></div></div>';
+  html += '<div style="padding:14px 20px;border-bottom:1px solid var(--line);"><div style="font-size:12px;color:var(--sub);">'+_t('labelLocation')+'</div><div id="azd-location" style="font-size:15px;font-weight:600;margin-top:2px;"></div></div>';
+  html += '<div style="padding:14px 20px;border-bottom:1px solid var(--line);"><div style="font-size:12px;color:var(--sub);">'+_t('labelStatus')+'</div><div id="azd-status" style="font-size:15px;font-weight:600;margin-top:2px;color:var(--success);"></div></div>';
+  html += '<div style="padding:14px 20px;"><div style="font-size:12px;color:var(--sub);">'+_t('labelDate')+'</div><div id="azd-date" style="font-size:15px;font-weight:600;margin-top:2px;"></div></div>';
   html += '</div>';
-  html += '<button onclick="document.getElementById(\'azone-detail-overlay\').style.display=\'none\';" style="width:100%;padding:16px;background:var(--card);border:1px solid var(--line);border-radius:16px;font-size:16px;color:var(--sub);cursor:pointer;font-family:\'Pretendard\',sans-serif;">닫기</button>';
+  html += '<button onclick="document.getElementById(\'azone-detail-overlay\').style.display=\'none\';" style="width:100%;padding:16px;background:var(--card);border:1px solid var(--line);border-radius:16px;font-size:16px;color:var(--sub);cursor:pointer;font-family:\'Pretendard\',sans-serif;">'+_t('btnClose')+'</button>';
   html += '</div></div>';
 
   list.innerHTML = html;
@@ -1807,7 +1852,7 @@ function onParkingSpotClick(spot, zone) {
   _e=document.getElementById('azd-material'); if(_e)_e.textContent=m.material||'-';
   _e=document.getElementById('azd-company');  if(_e)_e.textContent=m.company||'-';
   _e=document.getElementById('azd-location'); if(_e)_e.textContent=m.location||'-';
-  _e=document.getElementById('azd-status');   if(_e)_e.textContent=m.status||'보관중';
+  _e=document.getElementById('azd-status');   if(_e){ _e.textContent=m.status==='보관중'?_t('statusStored'):(m.status==='폐기'?_t('statusDiscarded'):(m.status||_t('statusStored'))); }
   _e=document.getElementById('azd-date');     if(_e)_e.textContent=formatDate(m.inDate);
   var overlay = document.getElementById('azone-detail-overlay');
   if(overlay) overlay.style.display='flex';
@@ -1903,12 +1948,12 @@ function doSearch(silent) {
   var filtered=kw?MODELS.filter(function(m){return String(m.project||'').toLowerCase().includes(kwL);}):MODELS;
   renderList(filtered);
   buildZoneView(MODELS);
-  if(!silent){if(_sb){_sb.textContent='검색';_sb.disabled=false;_sb.classList.remove('btn-loading');}}
+  if(!silent){if(_sb){_sb.textContent=_t('searchBtn');_sb.disabled=false;_sb.classList.remove('btn-loading');}}
   var cb=document.getElementById('count-bar');
   var extCnt=MODELS.filter(function(m){return m.type==='EXT';}).length;
   var intCnt=MODELS.filter(function(m){return m.type==='INT';}).length;
   var activeChip=document.querySelector('.filter-chip.active');
-  var activeType=activeChip?(activeChip.textContent==='전체'?'all':activeChip.textContent==='EXT'?'ext':activeChip.textContent==='INT'?'int':'zone'):'all';
+  var activeType=activeChip?(activeChip.textContent.trim()===_t('filterAll')?'all':activeChip.textContent.trim()==='EXT'?'ext':activeChip.textContent.trim()==='INT'?'int':'zone'):'all';
   var _expBar=document.getElementById('zone-export-bar');
   if(_expBar)_expBar.style.display=(isAdmin&&activeType==='zone')?'block':'none';
   if(cb&&activeType!=='zone'){
@@ -2163,15 +2208,15 @@ var selectedDiscardQR = null;
 var selectedDiscardQRs = {};
 function doDiscardSearch() {
   var kw = document.getElementById('discard-search-input').value.trim();
-  if (!kw) { showToast('❌ 검색어를 입력해주세요'); return; }
+  if (!kw) { showToast(_t('errSearchKeyword')); return; }
   var container = document.getElementById('discard-search-results');
-  container.innerHTML = '<div style="text-align:center;padding:20px;color:var(--sub);" class="btn-loading">검색 중...</div>';
+  container.innerHTML = '<div style="text-align:center;padding:20px;color:var(--sub);" class="btn-loading">'+_t('searching')+'</div>';
   var kwLower = kw.toLowerCase();
   var filtered = MODELS.filter(function(m) {
     return m.status !== '폐기' && String(m.project||'').toLowerCase().includes(kwLower);
   });
   if (filtered.length === 0) {
-    container.innerHTML = '<div style="text-align:center;padding:30px;color:var(--sub);">검색 결과가 없습니다</div>';
+    container.innerHTML = '<div style="text-align:center;padding:30px;color:var(--sub);">'+_t('noResults')+'</div>';
     return;
   }
   renderDiscardResults(filtered, container);
@@ -2421,7 +2466,7 @@ function _buildXlsx(sheets) {
 
 function exportZoneExcel() {
   if (!MODELS || MODELS.length === 0) {
-    showToast('❌ 불러온 모델 데이터가 없습니다. 먼저 검색해주세요.');
+    showToast(_t('errNoData'));
     return;
   }
   var today = new Date();
