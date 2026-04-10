@@ -1503,6 +1503,7 @@ function selectUGSubZone(zid) {
     if(!btn) return;
     var spot = btn.getAttribute('data-spot');
     if(!spot) return;
+    // 점유 안된 스팟만 sel 토글
     grid.querySelectorAll('.car-spot-btn').forEach(function(b){
       var s = b.getAttribute('data-spot');
       var full2 = _parkingZone + ' ' + s;
@@ -1510,8 +1511,9 @@ function selectUGSubZone(zid) {
         ? MODELS.some(function(m){ return m.status!=='폐기' && m.location===full2; }) : false;
       if(!isOcc){ var o=b.querySelector('.car-outer'); if(o) o.classList.remove('sel'); }
     });
-    var el = document.getElementById('car-spot-'+spot);
-    if(el) el.classList.add('sel');
+    // 클릭한 버튼의 car-outer에 직접 sel 추가
+    var outer = btn.querySelector('.car-outer');
+    if(outer) outer.classList.add('sel');
     _parkingSpot = spot;
   };
 
@@ -1525,6 +1527,8 @@ function showUndergroundZoneList(models) {
   var list = document.getElementById('zone-detail-list');
   var content = document.getElementById('zone-detail-content');
   if(content){ content.style.overflow='auto'; content.style.paddingBottom='48px'; }
+  var screenEl = document.getElementById('screen-zone-detail');
+  if(screenEl){ screenEl.style.height=''; screenEl.style.minHeight=''; screenEl.style.overflow=''; screenEl.setAttribute('data-prev',''); }
   if(!list) return;
 
   var html = '<div style="padding:16px 16px 0;">';
@@ -1556,9 +1560,9 @@ function showParkingGrid(zone, models) {
   var list = document.getElementById('zone-detail-list');
   var content = document.getElementById('zone-detail-content');
   if(content){ content.style.overflow='hidden'; content.style.paddingBottom='0'; }
-  // screen 자체도 min-height 고정
+  // 전단계 = 지하 ZONE 목록임을 기록
   var screenEl = document.getElementById('screen-zone-detail');
-  if(screenEl){ screenEl.style.height='100vh'; screenEl.style.minHeight='unset'; screenEl.style.overflow='hidden'; }
+  if(screenEl){ screenEl.style.height='100vh'; screenEl.style.minHeight='unset'; screenEl.style.overflow='hidden'; screenEl.setAttribute('data-prev','underground-list'); }
   if(!list) return;
 
   var spotCount = p.spots;
@@ -1574,17 +1578,20 @@ function showParkingGrid(zone, models) {
     }
   });
 
-  // A존(4열×4행) 기준 aspect-ratio 고정: 4열일때 비율 그대로
-  // B,D(3열): 가운데 정렬, C(4열): A와 동일, E(3열×2행): 가운데
-  var gridStyle = 'display:grid;grid-template-columns:repeat('+cols+',1fr);grid-template-rows:repeat('+rows+',1fr);gap:6px;flex:1;';
-  // 칸수 적은 존(B,D,E)은 그리드 폭 제한해서 센터
-  var maxCols = 4; // A존 기준
-  var wrapStyle = cols < maxCols
-    ? 'flex:1;display:flex;align-items:center;justify-content:center;'
-    : 'flex:1;display:flex;';
-  var innerGridStyle = cols < maxCols
-    ? 'background:#F2F2F7;border:2px solid #E5E5EA;border-radius:20px;padding:10px;width:'+(cols/maxCols*100)+'%;aspect-ratio:'+(cols)+'/'+rows+';display:grid;grid-template-columns:repeat('+cols+',1fr);grid-template-rows:repeat('+rows+',1fr);gap:6px;'
-    : 'background:#F2F2F7;border:2px solid #E5E5EA;border-radius:20px;padding:10px;width:100%;display:grid;grid-template-columns:repeat('+cols+',1fr);grid-template-rows:repeat('+rows+',1fr);gap:6px;';
+  // A존(4열×4행) 기준으로 모든 존 카드 크기 통일
+  // 카드 크기 = 화면 기준 4열 동일 → 3열존은 그리드 폭 75%로 제한 + 세로 비율도 A존 동일(4행 기준)
+  var maxCols = 4;
+  var maxRows = 4;
+  // 그리드 전체 높이: A존 기준 (flex:1 대신 고정 aspect-ratio로)
+  // 폭: cols/maxCols * 100%  |  높이: rows/maxRows * A존높이
+  var gridWidthPct = Math.round(cols / maxCols * 100);
+  var gridHeightPct = Math.round(rows / maxRows * 100);
+
+  var wrapStyle = 'flex:1;display:flex;align-items:center;justify-content:center;';
+  // 그리드는 폭을 cols/4 비율로 고정, 높이는 rows/4 비율로 고정 → 카드 크기 항상 A존과 동일
+  var innerGridStyle = 'background:#F2F2F7;border:2px solid #E5E5EA;border-radius:20px;padding:10px;'
+    + 'width:'+gridWidthPct+'%;height:'+gridHeightPct+'%;'
+    + 'display:grid;grid-template-columns:repeat('+cols+',1fr);grid-template-rows:repeat('+rows+',1fr);gap:6px;box-sizing:border-box;';
 
   var html = '<div style="padding:10px 12px;display:flex;flex-direction:column;height:100%;box-sizing:border-box;">';
   html += '<button onclick="showUndergroundZoneList(MODELS)" style="font-size:12px;color:#8E8E93;background:none;border:0.5px solid #C7C7CC;border-radius:20px;padding:4px 12px;cursor:pointer;font-family:\'Pretendard\',sans-serif;margin-bottom:10px;align-self:flex-start;">← 전체 보기</button>';
@@ -1929,6 +1936,15 @@ window.addEventListener('popstate', function(e) {
   // 홈 화면이면 그냥 무시 (로그인/브라우저로 절대 안 감)
   if (currentScreen === 'screen-home' || currentScreen === 'screen-login') {
     return;
+  }
+  // zone-detail 화면에서 백버튼 → data-prev 확인해서 전단계로
+  if (currentScreen === 'screen-zone-detail') {
+    var screenEl2 = document.getElementById('screen-zone-detail');
+    var prevState = screenEl2 ? screenEl2.getAttribute('data-prev') : '';
+    if (prevState === 'underground-list') {
+      showUndergroundZoneList(MODELS);
+      return;
+    }
   }
   // 다른 화면이면 이전 화면으로
   if (screenHistory.length > 1) {
