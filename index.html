@@ -674,7 +674,7 @@ function unsubscribeModels() {
 
 
 var LOCATIONS = [
-  {group:'지하',zones:['지하 A ZONE','지하 B ZONE','지하 C ZONE','지하 D ZONE','지하 E ZONE']},
+  {group:'지하',zones:['지하 ZONE']},
   {group:'스튜디오',zones:['메인 스튜디오','서브 스튜디오']},
   {group:'품평장',zones:['실내 품평장','실외 품평장']},
   {group:'외부 외장',zones:['외부 외장 A ZONE','외부 외장 B ZONE','외부 외장 C ZONE','외부 외장 D ZONE','외부 외장 E ZONE']},
@@ -1276,8 +1276,13 @@ function buildLocationGrid() {
   grid.innerHTML='';
   ALL_ZONES.forEach(function(zone){
     var btn=document.createElement('button');
-    btn.className='loc-btn'; btn.textContent=zone;
+    btn.className='loc-btn';
+    // 지하 ZONE은 특별 아이콘 표시
+    btn.textContent = zone === '지하 ZONE' ? '🅿 지하 ZONE' : zone;
+    if(zone === '지하 ZONE') btn.style.cssText='grid-column:1/-1;width:100%;';
     btn.onclick=function(){
+      // 지하 ZONE → 이미지 팝업
+      if(zone === '지하 ZONE'){ openUndergroundSelect(); return; }
       // 세부구역 있는 ZONE이면 팝업 열기
       if(openParkingOverlay(zone)) return;
       document.querySelectorAll('.loc-btn').forEach(function(b){b.classList.remove('selected');});
@@ -1341,7 +1346,13 @@ function buildZoneView(models) {
   LOCATIONS.forEach(function(group){
     var gt=document.createElement('div');gt.className='zone-group-title';gt.textContent=group.group;container.appendChild(gt);
     group.zones.forEach(function(zone){
-      var zm=models.filter(function(m){return m.location&&(m.location===zone||m.location.indexOf(zone+' ')==0)&&m.status==='보관중';});
+      // 지하 ZONE은 A~E 전체 집계
+      var zm;
+      if(zone === '지하 ZONE'){
+        zm = models.filter(function(m){return m.location&&m.location.indexOf('지하 ')==0&&m.status==='보관중';});
+      } else {
+        zm=models.filter(function(m){return m.location&&(m.location===zone||m.location.indexOf(zone+' ')==0)&&m.status==='보관중';});
+      }
       var sec=document.createElement('div');sec.className='zone-section';
       sec.style.cursor='pointer';
       var hdr=document.createElement('div');hdr.className='zone-header';
@@ -1370,9 +1381,14 @@ function buildZoneView(models) {
 }
 
 function showZoneDetail(zone, models) {
-  // 지하 A ZONE → 항상 최신 데이터로 파킹 그리드 뷰
-  if (zone === '지하 A ZONE') {
-    showAZoneGrid(MODELS); // Firebase 실시간 데이터
+  // 지하 ZONE → 서브존(A~E) 목록 뷰
+  if (zone === '지하 ZONE') {
+    showUndergroundZoneList(MODELS);
+    return;
+  }
+  // 지하 A~E ZONE 직접 (내부 호출용)
+  if (zone.match(/^지하 [A-E] ZONE$/)) {
+    showParkingGrid(zone, MODELS);
     return;
   }
   var title = document.getElementById('zone-detail-title');
@@ -1398,45 +1414,168 @@ function showZoneDetail(zone, models) {
   goTo('screen-zone-detail');
 }
 
-function showAZoneGrid(models) {
+// ── 지하 서브존 정의 ─────────────────────────────────
+var UG_ZONES = {
+  A: { cols:4, spots:16 },  // 1~16, 4열×4행
+  B: { cols:3, spots:12 },  // 1~12, 3열×4행
+  C: { cols:4, spots:16 },  // 1~16, 4열×4행
+  D: { cols:3, spots:12 },  // 1~12, 3열×4행
+  E: { cols:3, spots:6  },  // 1~6,  3열×2행
+};
+
+// 위치 등록에서 "지하 ZONE" 클릭 → 이미지+ABCDE 버튼 팝업
+function openUndergroundSelect() {
+  // 현재 각 존 점유 수 계산
+  var counts = {};
+  ['A','B','C','D','E'].forEach(function(z){
+    counts[z] = (typeof MODELS !== 'undefined' && MODELS)
+      ? MODELS.filter(function(m){return m.status!=='폐기'&&m.location&&m.location.indexOf('지하 '+z+' ZONE')===0;}).length
+      : 0;
+  });
+  var overlay = document.getElementById('ug-select-overlay');
+  var sheet   = document.getElementById('ug-select-sheet');
+
+  // ABCDE 버튼 카운트 업데이트
+  ['A','B','C','D','E'].forEach(function(z){
+    var btn = document.getElementById('ugsel-btn-'+z);
+    var cnt = document.getElementById('ugsel-cnt-'+z);
+    if(cnt) cnt.textContent = counts[z] > 0 ? counts[z]+'대' : '비어있음';
+    if(cnt) cnt.style.background = counts[z] > 0 ? '#007AFF' : 'transparent';
+    if(cnt) cnt.style.color = counts[z] > 0 ? '#fff' : '#8E8E93';
+  });
+
+  overlay.style.display = 'flex';
+}
+
+function closeUGSelectOverlay(e) {
+  var overlay = document.getElementById('ug-select-overlay');
+  if(e && e.target !== overlay) return;
+  overlay.style.display = 'none';
+}
+
+// ABCDE 중 하나 선택 → 파킹 그리드 팝업 열기
+function selectUGSubZone(zid) {
+  document.getElementById('ug-select-overlay').style.display = 'none';
+  var zone = '지하 ' + zid + ' ZONE';
+  _parkingZone = zone;
+  _parkingSpot = '';
+
+  var p = UG_ZONES[zid];
+  var grid = document.getElementById('parking-lot-grid');
+  var confirmBtn = document.getElementById('parking-confirm-btn');
+  document.getElementById('parking-zone-title').textContent = zone;
+  if(confirmBtn){confirmBtn.textContent='디자인 모델 위치 등록';confirmBtn.disabled=false;confirmBtn.classList.remove('btn-loading');confirmBtn.style.pointerEvents='auto';}
+
+  // 스팟 목록 생성: 이미지 기준 위→아래, 좌→우 (행 우선)
+  grid.innerHTML = '';
+  grid.style.gridTemplateColumns = 'repeat('+p.cols+',1fr)';
+
+  for(var i=1;i<=p.spots;i++){
+    var spot = zid+'-'+i;
+    var full = zone + ' ' + spot;
+    var occupiedModel = (typeof MODELS !== 'undefined' && MODELS)
+      ? MODELS.find(function(m){ return m.status !== '폐기' && m.location === full; })
+      : null;
+    var btn = document.createElement('button');
+    btn.className = 'car-spot-btn';
+    btn.setAttribute('data-spot', spot);
+    btn.innerHTML = carSpotSVG(spot, !!occupiedModel, occupiedModel ? occupiedModel.project : null);
+    grid.appendChild(btn);
+  }
+
+  // 이벤트 위임
+  grid.onclick = function(e) {
+    var btn = e.target.closest('.car-spot-btn');
+    if(!btn) return;
+    var spot = btn.getAttribute('data-spot');
+    if(!spot) return;
+    grid.querySelectorAll('.car-spot-btn').forEach(function(b){
+      var s = b.getAttribute('data-spot');
+      var full2 = _parkingZone + ' ' + s;
+      var isOcc = (typeof MODELS !== 'undefined' && MODELS)
+        ? MODELS.some(function(m){ return m.status!=='폐기' && m.location===full2; }) : false;
+      if(!isOcc){ var o=b.querySelector('.car-outer'); if(o) o.classList.remove('sel'); }
+    });
+    var el = document.getElementById('car-spot-'+spot);
+    if(el) el.classList.add('sel');
+    _parkingSpot = spot;
+  };
+
+  document.getElementById('parking-overlay').style.display = 'flex';
+}
+
+// 검색 화면: 지하 ZONE 클릭 → A~E 서브 목록 뷰
+function showUndergroundZoneList(models) {
   var title = document.getElementById('zone-detail-title');
-  if(title) title.textContent = '지하 A ZONE';
+  if(title) title.textContent = '지하 ZONE';
   var list = document.getElementById('zone-detail-list');
   if(!list) return;
 
-  var spots = ['A-7','A-8','A-9','A-4','A-5','A-6','A-1','A-2','A-3'];
+  var html = '<div style="padding:16px 16px 0;">';
+  ['A','B','C','D','E'].forEach(function(zid){
+    var zone = '지하 '+zid+' ZONE';
+    var zm = models.filter(function(m){
+      return m.status!=='폐기' && m.location && m.location.indexOf(zone)==0;
+    });
+    html += '<div style="margin-bottom:8px;cursor:pointer;" onclick="showParkingGrid(\''+zone+'\',MODELS)">';
+    html += '<div style="display:flex;align-items:center;justify-content:space-between;background:var(--card);border-radius:12px;padding:12px 16px;box-shadow:var(--shadow-sm);">';
+    html += '<div style="font-size:14px;font-weight:600;">'+zone+'</div>';
+    html += '<div style="display:flex;align-items:center;gap:8px;"><div style="font-size:24px;font-weight:900;font-family:\'Bebas Neue\',sans-serif;color:'+(zm.length===0?'#C7C7CC':'var(--text)')+';">'+zm.length+'</div><div style="color:#C7C7CC;font-size:16px;">›</div></div>';
+    html += '</div></div>';
+  });
+  html += '</div>';
+  list.innerHTML = html;
+  goTo('screen-zone-detail');
+}
+
+// 검색 화면: 특정 지하 서브존 파킹 그리드 뷰
+function showParkingGrid(zone, models) {
+  var match = zone.match(/^지하 ([A-E]) ZONE$/);
+  if(!match) return;
+  var zid = match[1];
+  var p = UG_ZONES[zid];
+
+  var title = document.getElementById('zone-detail-title');
+  if(title) title.textContent = zone;
+  var list = document.getElementById('zone-detail-list');
+  if(!list) return;
+
+  var spotCount = p.spots;
+  var cols = p.cols;
+
   // 스팟별 모델 매핑
   var spotMap = {};
   models.forEach(function(m){
-    var loc = m.location || '';
-    spots.forEach(function(s){
-      if(loc === '지하 A ZONE ' + s) spotMap[s] = m;
-    });
+    if(m.location && m.location.indexOf(zone+' ')==0){
+      var key = m.location.replace(zone+' ','');
+      spotMap[key] = m;
+    }
   });
 
   var html = '<div style="padding:16px;">';
-  html += '<div style="background:#F2F2F7;border:2px solid #E5E5EA;border-radius:20px;padding:12px;display:grid;grid-template-columns:repeat(3,1fr);gap:10px;">';
+  // 뒤로가기 (지하 ZONE 목록)
+  html += '<button onclick="showUndergroundZoneList(MODELS)" style="font-size:12px;color:#8E8E93;background:none;border:0.5px solid #C7C7CC;border-radius:20px;padding:4px 12px;cursor:pointer;font-family:\'Pretendard\',sans-serif;margin-bottom:12px;">← 전체 보기</button>';
+  html += '<div style="background:#F2F2F7;border:2px solid #E5E5EA;border-radius:20px;padding:12px;display:grid;grid-template-columns:repeat('+cols+',1fr);gap:8px;">';
 
-  spots.forEach(function(spot){
+  for(var i=1;i<=spotCount;i++){
+    var spot = zid+'-'+i;
     var m = spotMap[spot];
     var occupied = !!m;
 
-    html += '<div onclick="onAZoneSpotClick(\'' + spot + '\')" style="cursor:' + (occupied?'pointer':'default') + ';display:flex;justify-content:center;width:100%;">';
-    html += '<div style="width:100%;aspect-ratio:2/3;background:' + (occupied?'#1C1C1E':'#fff') + ';border:2px solid ' + (occupied?'#1C1C1E':'#C7C7CC') + ';border-radius:18px;padding:4px;position:relative;display:flex;align-items:center;justify-content:center;">';
-    html += '<div style="width:100%;height:100%;background:' + (occupied?'#3A3A3C':'#F8F8F8') + ';border:1.5px solid ' + (occupied?'#555':'#D1D1D6') + ';border-radius:13px;display:flex;flex-direction:column;align-items:center;justify-content:center;padding:6px 4px;gap:3px;">';
-    if (occupied) {
-      html += '<span style="font-size:13px;font-weight:800;color:#fff;text-align:center;word-break:break-all;line-height:1.2;">' + m.project + '</span>';
-      html += '<span style="font-size:10px;font-weight:400;color:rgba(255,255,255,0.55);text-align:center;">' + spot + '</span>';
+    html += '<div onclick="'+(occupied?'onParkingSpotClick(\''+spot+'\',\''+zone+'\')':'')+(occupied?'':'')+'" style="cursor:'+(occupied?'pointer':'default')+';display:flex;justify-content:center;width:100%;">';
+    html += '<div style="width:100%;aspect-ratio:2/3;background:'+(occupied?'#1C1C1E':'#fff')+';border:2px solid '+(occupied?'#1C1C1E':'#C7C7CC')+';border-radius:18px;padding:4px;position:relative;display:flex;align-items:center;justify-content:center;">';
+    html += '<div style="width:100%;height:100%;background:'+(occupied?'#3A3A3C':'#F8F8F8')+';border:1.5px solid '+(occupied?'#555':'#D1D1D6')+';border-radius:13px;display:flex;flex-direction:column;align-items:center;justify-content:center;padding:6px 4px;gap:3px;">';
+    if(occupied){
+      html += '<span style="font-size:'+(cols===4?'10':'12')+'px;font-weight:800;color:#fff;text-align:center;word-break:break-all;line-height:1.2;">'+m.project+'</span>';
+      html += '<span style="font-size:9px;font-weight:400;color:rgba(255,255,255,0.55);text-align:center;">'+spot+'</span>';
     } else {
-      html += '<span style="font-size:16px;font-weight:700;color:#1C1C1E;">' + spot + '</span>';
+      html += '<span style="font-size:'+(cols===4?'12':'15')+'px;font-weight:700;color:#1C1C1E;">'+i+'</span>';
     }
     html += '</div>';
-    // 사이드미러
-    html += '<div style="position:absolute;left:-6px;bottom:28%;width:6px;height:10px;background:' + (occupied?'#48484A':'#E5E5EA') + ';border:1.5px solid ' + (occupied?'#666':'#C7C7CC') + ';border-radius:3px 0 0 3px;"></div>';
-    html += '<div style="position:absolute;right:-6px;bottom:28%;width:6px;height:10px;background:' + (occupied?'#48484A':'#E5E5EA') + ';border:1.5px solid ' + (occupied?'#666':'#C7C7CC') + ';border-radius:0 3px 3px 0;"></div>';
+    html += '<div style="position:absolute;left:-6px;bottom:28%;width:6px;height:10px;background:'+(occupied?'#48484A':'#E5E5EA')+';border:1.5px solid '+(occupied?'#666':'#C7C7CC')+';border-radius:3px 0 0 3px;"></div>';
+    html += '<div style="position:absolute;right:-6px;bottom:28%;width:6px;height:10px;background:'+(occupied?'#48484A':'#E5E5EA')+';border:1.5px solid '+(occupied?'#666':'#C7C7CC')+';border-radius:0 3px 3px 0;"></div>';
     html += '</div></div>';
-  });
-
+  }
   html += '</div></div>';
 
   // 모델 상세 팝업 (hidden)
@@ -1459,16 +1598,14 @@ function showAZoneGrid(models) {
   html += '</div></div>';
 
   list.innerHTML = html;
-
-  // spotMap을 전역에 저장 (클릭 핸들러에서 참조)
-  window._aZoneSpotMap = spotMap;
-
   goTo('screen-zone-detail');
 }
 
-function onAZoneSpotClick(spot) {
-  var m = window._aZoneSpotMap && window._aZoneSpotMap[spot];
-  if (!m) { showToast('빈 구역입니다'); return; }
+// 검색 화면 파킹 스팟 클릭 → 모델 상세
+function onParkingSpotClick(spot, zone) {
+  var full = zone + ' ' + spot;
+  var m = MODELS.find(function(m){ return m.status!=='폐기' && m.location===full; });
+  if(!m) return;
   var _e;
   _e=document.getElementById('azd-project');  if(_e)_e.textContent=m.project||'-';
   _e=document.getElementById('azd-stage');    if(_e)_e.textContent=m.stage||'-';
@@ -1481,6 +1618,10 @@ function onAZoneSpotClick(spot) {
   var overlay = document.getElementById('azone-detail-overlay');
   if(overlay) overlay.style.display='flex';
 }
+
+// (구) showAZoneGrid 호환
+function showAZoneGrid(models) { showParkingGrid('지하 A ZONE', models); }
+function onAZoneSpotClick(spot) { onParkingSpotClick(spot, '지하 A ZONE'); }
 
 function closeAZoneDetail(e) {
   if(e.target === document.getElementById('azone-detail-overlay')) {
@@ -1726,6 +1867,12 @@ window.addEventListener('popstate', function(e) {
     history.pushState(null, '', location.href);
   }
 
+  // 지하 ZONE 선택 팝업 열려있으면 먼저 닫기
+  var ugSelectOverlay = document.getElementById('ug-select-overlay');
+  if (ugSelectOverlay && ugSelectOverlay.style.display !== 'none') {
+    ugSelectOverlay.style.display = 'none';
+    return;
+  }
   // 주차 팝업 열려있으면 먼저 닫기
   var parkingOverlay = document.getElementById('parking-overlay');
   if (parkingOverlay && parkingOverlay.style.display !== 'none') {
@@ -2268,13 +2415,15 @@ function confirmParkingSpot() {
   if (!scannedQR.location) { showToast('❌ QR 코드를 먼저 스캔해주세요'); document.getElementById('parking-overlay').style.display='none'; return; }
   if (!_parkingSpot) { showToast('❌ 구역을 선택해주세요'); return; }
   var full = _parkingZone + ' ' + _parkingSpot;
-  if (_parkingZone === '지하 A ZONE' && typeof MODELS !== 'undefined' && MODELS && MODELS.length > 0) {
+  if (_parkingZone.indexOf('지하 ') === 0 && typeof MODELS !== 'undefined' && MODELS && MODELS.length > 0) {
     var conflict = MODELS.filter(function(m){return m.status!=='폐기' && m.location===full && m.qrId!==scannedQR.location;});
     if (conflict.length > 0) { showToast('❌ '+full+' 에 이미 ['+conflict[0].project+'] 모델이 있습니다'); return; }
   }
-  // 위치 선택 반영
+  // 위치 선택 반영 - "지하 ZONE" 버튼 selected 처리
   document.querySelectorAll('.loc-btn').forEach(function(b){b.classList.remove('selected');});
-  document.querySelectorAll('.loc-btn').forEach(function(b){ if(b.textContent.trim()===_parkingZone) b.classList.add('selected'); });
+  document.querySelectorAll('.loc-btn').forEach(function(b){
+    if(b.textContent.trim()==='🅿 지하 ZONE') b.classList.add('selected');
+  });
   selectedLocation = full;
 
   // 모델카드 위치 업데이트
@@ -2307,6 +2456,41 @@ function showToast(msg){var t=document.getElementById('toast');if(!t)return;t.te
 
 document.getElementById('reg-date').valueAsDate=new Date();
 </script>
+
+<!-- 지하 ZONE 선택 팝업 (이미지 + ABCDE 버튼) -->
+<div id="ug-select-overlay" style="display:none;position:fixed;inset:0;background:rgba(0,0,0,0.5);align-items:flex-end;z-index:9999;" onclick="closeUGSelectOverlay(event)">
+  <div style="background:#fff;border-radius:20px 20px 0 0;width:100%;padding:20px 16px 40px;max-height:92vh;overflow-y:auto;">
+    <div style="width:40px;height:4px;background:#E5E5EA;border-radius:2px;margin:0 auto 14px;"></div>
+    <div style="font-size:16px;font-weight:700;margin-bottom:12px;">지하 주차장 — ZONE 선택</div>
+    <!-- 평면도 이미지 -->
+    <div style="width:100%;border-radius:12px;overflow:hidden;margin-bottom:14px;">
+      <img src="https://1232ygf-hash.github.io/kia-model-manager-v2/underground-map.jpg" style="width:100%;display:block;" alt="지하창고 평면도" onerror="this.style.display='none'">
+    </div>
+    <!-- ABCDE 버튼 5개 -->
+    <div style="display:grid;grid-template-columns:repeat(5,1fr);gap:8px;">
+      <button id="ugsel-btn-A" onclick="selectUGSubZone('A')" style="background:#1C1C1E;border:none;border-radius:12px;padding:12px 4px;cursor:pointer;display:flex;flex-direction:column;align-items:center;gap:4px;">
+        <span style="font-size:22px;font-weight:700;color:#fff;font-family:'Bebas Neue',sans-serif;letter-spacing:1px;">A</span>
+        <span id="ugsel-cnt-A" style="font-size:10px;color:#8E8E93;padding:2px 6px;border-radius:6px;">비어있음</span>
+      </button>
+      <button id="ugsel-btn-B" onclick="selectUGSubZone('B')" style="background:#1C1C1E;border:none;border-radius:12px;padding:12px 4px;cursor:pointer;display:flex;flex-direction:column;align-items:center;gap:4px;">
+        <span style="font-size:22px;font-weight:700;color:#fff;font-family:'Bebas Neue',sans-serif;letter-spacing:1px;">B</span>
+        <span id="ugsel-cnt-B" style="font-size:10px;color:#8E8E93;padding:2px 6px;border-radius:6px;">비어있음</span>
+      </button>
+      <button id="ugsel-btn-C" onclick="selectUGSubZone('C')" style="background:#1C1C1E;border:none;border-radius:12px;padding:12px 4px;cursor:pointer;display:flex;flex-direction:column;align-items:center;gap:4px;">
+        <span style="font-size:22px;font-weight:700;color:#fff;font-family:'Bebas Neue',sans-serif;letter-spacing:1px;">C</span>
+        <span id="ugsel-cnt-C" style="font-size:10px;color:#8E8E93;padding:2px 6px;border-radius:6px;">비어있음</span>
+      </button>
+      <button id="ugsel-btn-D" onclick="selectUGSubZone('D')" style="background:#1C1C1E;border:none;border-radius:12px;padding:12px 4px;cursor:pointer;display:flex;flex-direction:column;align-items:center;gap:4px;">
+        <span style="font-size:22px;font-weight:700;color:#fff;font-family:'Bebas Neue',sans-serif;letter-spacing:1px;">D</span>
+        <span id="ugsel-cnt-D" style="font-size:10px;color:#8E8E93;padding:2px 6px;border-radius:6px;">비어있음</span>
+      </button>
+      <button id="ugsel-btn-E" onclick="selectUGSubZone('E')" style="background:#1C1C1E;border:none;border-radius:12px;padding:12px 4px;cursor:pointer;display:flex;flex-direction:column;align-items:center;gap:4px;">
+        <span style="font-size:22px;font-weight:700;color:#fff;font-family:'Bebas Neue',sans-serif;letter-spacing:1px;">E</span>
+        <span id="ugsel-cnt-E" style="font-size:10px;color:#8E8E93;padding:2px 6px;border-radius:6px;">비어있음</span>
+      </button>
+    </div>
+  </div>
+</div>
 
 <!-- 주차 구역 세부 선택 팝업 -->
 <div id="parking-overlay" style="display:none;" class="parking-overlay" onclick="closeParkingOverlay(event)">
