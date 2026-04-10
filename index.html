@@ -266,7 +266,10 @@ input[type="date"].form-input-inline{color-scheme:light;text-align:right;}
 <div id="screen-home" class="screen">
   <div class="home-header" style="padding:14px 16px 12px;display:flex;align-items:center;justify-content:space-between;">
     <span style="font-family:'Bebas Neue',sans-serif;font-size:20px;letter-spacing:1px;color:var(--text);white-space:nowrap;">KIA DESIGN MODEL MANAGER</span>
-    <button id="gear-btn" onclick="goTo('screen-account')" style="display:none;background:var(--fill);border:none;width:36px;height:36px;border-radius:10px;font-size:16px;cursor:pointer;">⚙️</button>
+    <div style="display:flex;align-items:center;gap:6px;">
+      <button id="gear-btn" onclick="goTo('screen-account')" style="display:none;background:var(--fill);border:none;width:36px;height:36px;border-radius:10px;font-size:16px;cursor:pointer;">⚙️</button>
+      <button id="lang-toggle-btn" onclick="toggleLang()" style="background:var(--fill);border:none;width:36px;height:36px;border-radius:10px;font-size:12px;font-weight:700;cursor:pointer;color:var(--text);letter-spacing:0.5px;font-family:'Pretendard',sans-serif;">EN</button>
+    </div>
   </div>
   <div class="stat-wrap" style="display:flex;gap:8px;padding:10px 16px 4px;">
     <div class="stat-card ext">
@@ -284,48 +287,48 @@ input[type="date"].form-input-inline{color-scheme:light;text-align:right;}
   </div>
   <!-- Admin Only -->
   <div id="admin-section" style="display:none;">
-    <div class="section-label" style="padding:12px 20px 8px;">ADMIN ONLY</div>
+    <div class="section-label" style="padding:12px 20px 8px;" data-i18n="adminOnly">ADMIN ONLY</div>
     <div class="menu-grid">
       <div class="menu-card" onclick="openQR('register')">
         <div class="menu-icon-wrap" style="background:rgba(108,71,255,0.1);">➕</div>
-        <div class="menu-card-title">디자인 모델 등록</div>
-        <div class="menu-card-desc">QR 스캔 후 신규 등록</div>
+        <div class="menu-card-title" data-i18n="register">디자인 모델 등록</div>
+        <div class="menu-card-desc" data-i18n="registerDesc">QR 스캔 후 신규 등록</div>
       </div>
       <div class="menu-card" onclick="openQR('discard')">
         <div class="menu-icon-wrap" style="background:rgba(255,71,71,0.1);">🗑</div>
-        <div class="menu-card-title">디자인 모델 폐기</div>
-        <div class="menu-card-desc">QR 스캔 후 폐기 처리</div>
+        <div class="menu-card-title" data-i18n="discard">디자인 모델 폐기</div>
+        <div class="menu-card-desc" data-i18n="discardDesc">QR 스캔 후 폐기 처리</div>
       </div>
     </div>
   </div>
 
   <!-- General -->
   <div>
-    <div class="section-label" style="padding:12px 20px 8px;">GENERAL</div>
+    <div class="section-label" style="padding:12px 20px 8px;" data-i18n="general">GENERAL</div>
     <!-- 일반/관리자: 위치등록+모델검색 2열 -->
     <div class="menu-grid" id="general-grid">
       <div id="menu-row-location" class="menu-card" onclick="openQR('location')">
         <div class="menu-icon-wrap" style="background:rgba(33,150,243,0.1);">📍</div>
-        <div class="menu-card-title">위치 등록</div>
-        <div class="menu-card-desc">QR 스캔 후 위치 지정</div>
+        <div class="menu-card-title" data-i18n="location">위치 등록</div>
+        <div class="menu-card-desc" data-i18n="locationDesc">QR 스캔 후 위치 지정</div>
       </div>
       <div class="menu-card" onclick="enterSearch()">
         <div class="menu-icon-wrap" style="background:rgba(0,194,168,0.1);">🔍</div>
-        <div class="menu-card-title">모델 검색</div>
-        <div class="menu-card-desc">검색 및 구역별 현황</div>
+        <div class="menu-card-title" data-i18n="search">모델 검색</div>
+        <div class="menu-card-desc" data-i18n="searchDesc">검색 및 구역별 현황</div>
       </div>
     </div>
     <!-- 게스트: 모델검색+QR검색 2열 -->
     <div class="menu-grid" id="qrsearch-grid" style="display:none;">
       <div class="menu-card" onclick="enterSearch()">
         <div class="menu-icon-wrap" style="background:rgba(0,194,168,0.1);">🔍</div>
-        <div class="menu-card-title">모델 검색</div>
-        <div class="menu-card-desc">검색 및 구역별 현황</div>
+        <div class="menu-card-title" data-i18n="search">모델 검색</div>
+        <div class="menu-card-desc" data-i18n="searchDesc">검색 및 구역별 현황</div>
       </div>
       <div class="menu-card" onclick="openQR('qrsearch')">
         <div class="menu-icon-wrap" style="background:rgba(255,149,0,0.1);">📷</div>
-        <div class="menu-card-title">QR 검색</div>
-        <div class="menu-card-desc">QR 스캔으로 즉시 조회</div>
+        <div class="menu-card-title" data-i18n="qrsearch">QR 검색</div>
+        <div class="menu-card-desc" data-i18n="qrsearchDesc">QR 스캔으로 즉시 조회</div>
       </div>
     </div>
     <!-- 일반/관리자: QR검색 와이드 -->
@@ -333,33 +336,33 @@ input[type="date"].form-input-inline{color-scheme:light;text-align:right;}
       <div class="menu-card" onclick="openQR('qrsearch')" style="align-items:center;padding:16px;">
         <div class="menu-icon-wrap" style="background:rgba(255,149,0,0.1);margin:0 auto 8px;">📷</div>
         <div style="text-align:center;width:100%;">
-          <div class="menu-card-title">QR 검색</div>
-          <div class="menu-card-desc">QR 스캔으로 모델 정보 즉시 조회</div>
+          <div class="menu-card-title" data-i18n="qrsearch">QR 검색</div>
+          <div class="menu-card-desc" data-i18n="qrsearchDesc">QR 스캔으로 모델 정보 즉시 조회</div>
         </div>
       </div>
     </div>
   </div>
   <div class="logout-section">
-    <button class="logout-btn" onclick="(function(){var _pw=document.getElementById('login-pw');if(_pw)_pw.value='';unsubscribeModels();localStorage.removeItem('kia_session_v2');MODELS=[];goTo('screen-login');})()">로그아웃</button>
+    <button class="logout-btn" data-i18n="logout" onclick="(function(){var _pw=document.getElementById('login-pw');if(_pw)_pw.value='';unsubscribeModels();localStorage.removeItem('kia_session_v2');MODELS=[];goTo('screen-login');})()">로그아웃</button>
   </div>
 </div>
 
 <!-- 디자인 모델 등록 -->
 <div id="screen-register" class="screen">
   <div class="top-bar">
-    <button class="back-btn" onclick="stopQR('register');goTo('screen-home')">‹ 홈</button>
-    <div class="top-bar-title">디자인 모델 등록</div>
+    <button class="back-btn" onclick="stopQR('register');goTo('screen-home')" data-i18n="backHome">‹ 홈</button>
+    <div class="top-bar-title" data-i18n="registerTitle">디자인 모델 등록</div>
     <div class="right-slot"></div>
   </div>
   <div class="content">
     <div class="qr-scanner-area"><div id="qr-reader"></div>
-      <div class="qr-info-bar"><div class="qr-info-bar-text"><span class="qr-id" id="reg-qr-val">QR 코드를 스캔하세요</span><span class="qr-status waiting" id="reg-qr-status">대기중</span></div><button class="camera-flip-btn" onclick="flipCamera()" style="display:none;background:#000;color:#fff;border:none;border-radius:10px;padding:8px 10px;font-size:14px;font-weight:700;cursor:pointer;font-family:'Pretendard',sans-serif;flex-shrink:0;">🔄 전면</button></div>
+      <div class="qr-info-bar"><div class="qr-info-bar-text"><span class="qr-id" id="reg-qr-val" data-i18n="scanQR">QR 코드를 스캔하세요</span><span class="qr-status waiting" id="reg-qr-status" data-i18n="waiting">대기중</span></div><button class="camera-flip-btn" onclick="flipCamera()" style="display:none;background:#000;color:#fff;border:none;border-radius:10px;padding:8px 10px;font-size:14px;font-weight:700;cursor:pointer;font-family:'Pretendard',sans-serif;flex-shrink:0;" data-i18n="flipFront">🔄 전면</button></div>
     </div>
     <div class="form-section" style="margin-top:16px;">
-      <div class="form-group-label">디자인 모델 정보</div>
+      <div class="form-group-label" data-i18n="modelInfo">디자인 모델 정보</div>
       <div class="form-card">
-        <div class="form-row"><label>프로젝트명 <span class="req">*</span></label><input type="text" class="form-input-inline" id="reg-project" placeholder="2026_EV9_EXT"></div>
-        <div class="form-row" style="align-items:flex-start;"><label style="line-height:1.4;padding-top:14px;">프로젝트<br><span>단계</span> <span class="req">*</span></label>
+        <div class="form-row"><label data-i18n="projectName">프로젝트명 <span class="req">*</span></label><input type="text" class="form-input-inline" id="reg-project" placeholder="2026_EV9_EXT"></div>
+        <div class="form-row" style="align-items:flex-start;"><label style="line-height:1.4;padding-top:14px;" data-i18n="projectStage">프로젝트<br><span>단계</span> <span class="req">*</span></label>
           <div style="flex:1;padding:4px 0;display:grid;grid-template-columns:1fr 1fr;gap:6px;">
             <button class="stage-btn selected" onclick="selectStage(this,'SELECTION')">SELECTION</button>
             <button class="stage-btn" onclick="selectStage(this,'PROGRESS')">PROGRESS</button>
@@ -368,13 +371,13 @@ input[type="date"].form-input-inline{color-scheme:light;text-align:right;}
             <button class="stage-btn" onclick="selectStage(this,'DSO')" style="grid-column:1/-1;">DSO</button>
           </div>
         </div>
-        <div class="form-row"><label>모델 타입 <span class="req">*</span></label>
+        <div class="form-row"><label data-i18n="modelType">모델 타입 <span class="req">*</span></label>
           <div class="type-selector" style="flex:1;padding:2px 0;">
             <button class="type-btn selected" onclick="selectType(this,'EXT')">EXT</button>
             <button class="type-btn" onclick="selectType(this,'INT')">INT</button>
           </div>
         </div>
-        <div class="form-row"><label>소재 <span class="req">*</span></label>
+        <div class="form-row"><label data-i18n="material">소재 <span class="req">*</span></label>
           <div style="flex:1;padding:2px 0;display:grid;grid-template-columns:1fr 1fr;gap:8px;">
             <button class="mat-btn selected" onclick="selectMaterial(this,'CLAY')">CLAY</button>
             <button class="mat-btn" onclick="selectMaterial(this,'HARD')">HARD</button>
@@ -382,25 +385,25 @@ input[type="date"].form-input-inline{color-scheme:light;text-align:right;}
             <button class="mat-btn" onclick="selectMaterial(this,'CLAY+HARD')">CLAY+HARD</button>
           </div>
         </div>
-        <div class="form-row"><label>제작회사 <span class="req">*</span></label><input type="text" class="form-input-inline" id="reg-company" placeholder="(주)다이나믹"></div>
-        <div class="form-row"><label>품평일자 <span class="req">*</span></label><input type="date" class="form-input-inline" id="reg-date"></div>
-        <div class="form-row" style="align-items:flex-start;"><label style="padding-top:14px;">메모</label><textarea class="form-input-inline" id="reg-memo" placeholder="특이사항 입력..."></textarea></div>
+        <div class="form-row"><label data-i18n="manufacturer">제작회사 <span class="req">*</span></label><input type="text" class="form-input-inline" id="reg-company" placeholder="(주)다이나믹"></div>
+        <div class="form-row"><label data-i18n="reviewDate">품평일자 <span class="req">*</span></label><input type="date" class="form-input-inline" id="reg-date"></div>
+        <div class="form-row" style="align-items:flex-start;"><label style="padding-top:14px;" data-i18n="memo">메모</label><textarea class="form-input-inline" id="reg-memo" data-i18n-placeholder="memoPlaceholder" placeholder="특이사항 입력..."></textarea></div>
       </div>
     </div>
-    <div class="btn-section"><button class="submit-btn primary" onclick="submitRegister()">디자인 모델 등록</button></div>
+    <div class="btn-section"><button class="submit-btn primary" data-i18n="registerBtn" onclick="submitRegister()">디자인 모델 등록</button></div>
   </div>
 </div>
 
 <!-- 디자인 모델 위치 등록 -->
 <div id="screen-location" class="screen">
   <div class="top-bar">
-    <button class="back-btn" onclick="stopQR('location');goTo('screen-home')">‹ 홈</button>
-    <div class="top-bar-title">디자인 모델 위치 등록</div>
+    <button class="back-btn" onclick="stopQR('location');goTo('screen-home')" data-i18n="backHome">‹ 홈</button>
+    <div class="top-bar-title" data-i18n="locationTitle">디자인 모델 위치 등록</div>
     <div class="right-slot"></div>
   </div>
   <div class="content">
     <div class="qr-scanner-area"><div id="qr-reader-loc"></div>
-      <div class="qr-info-bar"><div class="qr-info-bar-text"><span class="qr-id" id="loc-qr-val">모델 QR 코드를 스캔하세요</span><span class="qr-status waiting" id="loc-qr-status">대기중</span></div><button class="camera-flip-btn" onclick="flipCamera()" style="display:none;background:#000;color:#fff;border:none;border-radius:10px;padding:8px 10px;font-size:14px;font-weight:700;cursor:pointer;font-family:'Pretendard',sans-serif;flex-shrink:0;">🔄 전면</button></div>
+      <div class="qr-info-bar"><div class="qr-info-bar-text"><span class="qr-id" id="loc-qr-val" data-i18n="scanModelQR">모델 QR 코드를 스캔하세요</span><span class="qr-status waiting" id="loc-qr-status" data-i18n="waiting">대기중</span></div><button class="camera-flip-btn" onclick="flipCamera()" style="display:none;background:#000;color:#fff;border:none;border-radius:10px;padding:8px 10px;font-size:14px;font-weight:700;cursor:pointer;font-family:'Pretendard',sans-serif;flex-shrink:0;" data-i18n="flipFront">🔄 전면</button></div>
     </div>
     <div id="loc-model-info" style="display:none;margin:12px 16px 0;">
       <div class="model-card" style="cursor:default;">
@@ -412,35 +415,34 @@ input[type="date"].form-input-inline{color-scheme:light;text-align:right;}
             <span id="loc-m-material-tag" class="type-tag" style="background:#F2F2F7;color:#555;margin-left:4px;"></span>
           </div>
         </div>
-        <div class="location-row" id="loc-m-loc">📍 미등록</div>
+        <div class="location-row" id="loc-m-loc">📍 <span data-i18n="unregistered">미등록</span></div>
         <div class="meta-row">
-          <div class="meta-item">제작사 <span id="loc-m-company">-</span></div>
-          <div class="meta-item">품평일 <span id="loc-m-indate">-</span></div>
+          <div class="meta-item"><span data-i18n="mfr">제작사</span> <span id="loc-m-company">-</span></div>
+          <div class="meta-item"><span data-i18n="reviewDateShort">품평일</span> <span id="loc-m-indate">-</span></div>
         </div>
       </div>
     </div>
     <div class="form-section" style="margin-top:8px;">
-      <div class="form-group-label">보관 위치 선택</div>
+      <div class="form-group-label" data-i18n="selectLocation">보관 위치 선택</div>
       <div class="form-card" style="padding:4px 12px 12px;">
         <div class="location-grid" id="location-grid"></div>
       </div>
     </div>
-    <div class="btn-section"><button id="loc-submit-btn" class="submit-btn primary" onclick="submitLocation()">디자인 모델 위치 등록</button></div>
+    <div class="btn-section"><button id="loc-submit-btn" class="submit-btn primary" data-i18n="locationBtn" onclick="submitLocation()">디자인 모델 위치 등록</button></div>
   </div>
 </div>
 
 <!-- 디자인 모델 폐기 -->
 <div id="screen-discard" class="screen">
   <div class="top-bar">
-    <button class="back-btn" onclick="stopQR('discard');goTo('screen-home')">‹ 홈</button>
-    <div class="top-bar-title">디자인 모델 폐기</div>
+    <button class="back-btn" onclick="stopQR('discard');goTo('screen-home')" data-i18n="backHome">‹ 홈</button>
+    <div class="top-bar-title" data-i18n="discardTitle">디자인 모델 폐기</div>
     <div class="right-slot"></div>
   </div>
-
   <!-- 탭 메뉴 -->
   <div style="display:flex;border-bottom:1px solid var(--line);background:var(--card);">
-    <button id="discard-tab-qr" onclick="switchDiscardTab('qr')" style="flex:1;padding:12px;border:none;background:none;font-size:14px;font-weight:600;color:var(--text);border-bottom:2px solid #000;cursor:pointer;font-family:'Pretendard',sans-serif;">📷 QR 스캔</button>
-    <button id="discard-tab-search" onclick="switchDiscardTab('search')" style="flex:1;padding:12px;border:none;background:none;font-size:14px;font-weight:400;color:var(--sub);border-bottom:2px solid transparent;cursor:pointer;font-family:'Pretendard',sans-serif;">🔍 모델 검색</button>
+    <button id="discard-tab-qr" onclick="switchDiscardTab('qr')" style="flex:1;padding:12px;border:none;background:none;font-size:14px;font-weight:600;color:var(--text);border-bottom:2px solid #000;cursor:pointer;font-family:'Pretendard',sans-serif;" data-i18n="tabQR">📷 QR 스캔</button>
+    <button id="discard-tab-search" onclick="switchDiscardTab('search')" style="flex:1;padding:12px;border:none;background:none;font-size:14px;font-weight:400;color:var(--sub);border-bottom:2px solid transparent;cursor:pointer;font-family:'Pretendard',sans-serif;" data-i18n="tabSearch">🔍 모델 검색</button>
   </div>
 
   <div class="content">
@@ -493,8 +495,8 @@ input[type="date"].form-input-inline{color-scheme:light;text-align:right;}
 <!-- 디자인 모델 검색 -->
 <div id="screen-search" class="screen">
   <div class="top-bar">
-    <button class="back-btn" onclick="goTo('screen-home')">‹ 홈</button>
-    <div class="top-bar-title">디자인 모델 검색</div>
+    <button class="back-btn" onclick="goTo('screen-home')" data-i18n="backHome">‹ 홈</button>
+    <div class="top-bar-title" data-i18n="searchTitle">디자인 모델 검색</div>
     <div class="right-slot"></div>
   </div>
   <div class="content">
@@ -523,8 +525,8 @@ input[type="date"].form-input-inline{color-scheme:light;text-align:right;}
 <!-- QR 검색 화면 -->
   <div id="screen-qrsearch" class="screen">
     <div class="top-bar">
-      <button class="back-btn" onclick="stopQR('qrsearch');goTo('screen-home')">‹ 홈</button>
-      <div class="top-bar-title">디자인 모델 QR 검색</div>
+      <button class="back-btn" onclick="stopQR('qrsearch');goTo('screen-home')" data-i18n="backHome">‹ 홈</button>
+      <div class="top-bar-title" data-i18n="qrsearchTitle">디자인 모델 QR 검색</div>
       <div class="right-slot"></div>
     </div>
     <div class="content">
@@ -562,7 +564,7 @@ input[type="date"].form-input-inline{color-scheme:light;text-align:right;}
 <!-- 구역 상세 화면 -->
 <div id="screen-zone-detail" class="screen" style="height:100vh;min-height:unset;overflow:hidden;">
   <div class="top-bar">
-    <button class="back-btn" onclick="goTo('screen-search')">‹ 뒤로</button>
+    <button class="back-btn" onclick="goTo('screen-search')" data-i18n="backBtn">‹ 뒤로</button>
     <div class="top-bar-title" id="zone-detail-title">구역 상세</div>
     <div class="right-slot"></div>
   </div>
@@ -573,8 +575,8 @@ input[type="date"].form-input-inline{color-scheme:light;text-align:right;}
 
 <div id="screen-account" class="screen">
   <div class="top-bar">
-    <button class="back-btn" onclick="goTo('screen-home')">‹ 홈</button>
-    <div class="top-bar-title">계정 관리</div>
+    <button class="back-btn" onclick="goTo('screen-home')" data-i18n="backHome">‹ 홈</button>
+    <div class="top-bar-title" data-i18n="accountTitle">계정 관리</div>
     <div class="right-slot"></div>
   </div>
   <div class="content">
@@ -674,7 +676,156 @@ function unsubscribeModels() {
 
 
 
-var LOCATIONS = [
+// ── i18n ─────────────────────────────────────────────
+var _lang = 'ko';
+var _I18N = {
+  ko: {
+    // 공통
+    backHome:'‹ 홈', backBtn:'‹ 뒤로', waiting:'대기중', scanQR:'QR 코드를 스캔하세요',
+    scanModelQR:'모델 QR 코드를 스캔하세요', flipFront:'🔄 전면', flipBack:'🔄 후면',
+    unregistered:'미등록', mfr:'제작사', reviewDateShort:'품평일',
+    // 홈
+    adminOnly:'ADMIN ONLY', general:'GENERAL',
+    register:'디자인 모델 등록', registerDesc:'QR 스캔 후 신규 등록',
+    discard:'디자인 모델 폐기', discardDesc:'QR 스캔 후 폐기 처리',
+    location:'위치 등록', locationDesc:'QR 스캔 후 위치 지정',
+    search:'모델 검색', searchDesc:'검색 및 구역별 현황',
+    qrsearch:'QR 검색', qrsearchDesc:'QR 스캔으로 즉시 조회',
+    logout:'로그아웃',
+    // 화면 타이틀
+    registerTitle:'디자인 모델 등록', locationTitle:'디자인 모델 위치 등록',
+    discardTitle:'디자인 모델 폐기', searchTitle:'디자인 모델 검색',
+    qrsearchTitle:'디자인 모델 QR 검색', accountTitle:'계정 관리',
+    // 폼
+    modelInfo:'디자인 모델 정보', projectName:'프로젝트명', projectStage:'프로젝트\n단계',
+    modelType:'모델 타입', material:'소재', manufacturer:'제작회사',
+    reviewDate:'품평일자', memo:'메모', memoPlaceholder:'특이사항 입력...',
+    selectLocation:'보관 위치 선택',
+    // 버튼
+    registerBtn:'디자인 모델 등록', locationBtn:'디자인 모델 위치 등록',
+    discardBtn:'🗑 폐기 처리', cancelBtn:'취소',
+    tabQR:'📷 QR 스캔', tabSearch:'🔍 모델 검색',
+    // 토스트/확인
+    errScanQR:'❌ QR 코드를 스캔해주세요',
+    errRequired:'❌ 필수 항목을 입력해주세요',
+    errLocation:'❌ 보관 위치를 선택해주세요',
+    errZone:'❌ 구역을 선택해주세요',
+    errConflict:'❌ 에 이미 모델이 있습니다',
+    errDiscarded:'❌ 이미 폐기된 모델입니다',
+    errNotFound:'❌ 등록되지 않은 QR 코드입니다',
+    okRegistered:'✅ 디자인 모델이 등록되었습니다',
+    okModified:'✅ 정보가 수정되었습니다',
+    okLocation:'📍 위치가 등록되었습니다',
+    okDiscarded:'🗑 폐기 처리되었습니다',
+    confirmDiscard:'정말 폐기하시겠습니까?',
+    confirmNo:'아니오', confirmYes:'예',
+    editMode:'수정 모드', editLoaded:'📝 기존 등록 정보를 불러왔습니다. 수정 후 저장하세요.',
+    discardedCode:'폐기된 코드', discardedModel:'폐기 모델',
+    // 구역명
+    underground:'지하 ZONE', exportLoc:'외부 반출',
+    exportPlaceholder:'반출 목적지 입력 (예: 본사 품평)',
+  },
+  en: {
+    backHome:'‹ Home', backBtn:'‹ Back', waiting:'Waiting', scanQR:'Scan QR code',
+    scanModelQR:'Scan model QR code', flipFront:'🔄 Front', flipBack:'🔄 Rear',
+    unregistered:'Unregistered', mfr:'Maker', reviewDateShort:'Review',
+    adminOnly:'ADMIN ONLY', general:'GENERAL',
+    register:'Register Model', registerDesc:'Scan QR to register',
+    discard:'Discard Model', discardDesc:'Scan QR to discard',
+    location:'Set Location', locationDesc:'Scan QR to assign location',
+    search:'Model Search', searchDesc:'Search & zone overview',
+    qrsearch:'QR Search', qrsearchDesc:'Instant lookup by QR scan',
+    logout:'Log out',
+    registerTitle:'Register Model', locationTitle:'Set Model Location',
+    discardTitle:'Discard Model', searchTitle:'Model Search',
+    qrsearchTitle:'Model QR Search', accountTitle:'Account Settings',
+    modelInfo:'Model Information', projectName:'Project', projectStage:'Stage',
+    modelType:'Type', material:'Material', manufacturer:'Maker',
+    reviewDate:'Review Date', memo:'Memo', memoPlaceholder:'Notes...',
+    selectLocation:'Select Storage Location',
+    registerBtn:'Register Model', locationBtn:'Set Model Location',
+    discardBtn:'🗑 Discard', cancelBtn:'Cancel',
+    tabQR:'📷 QR Scan', tabSearch:'🔍 Search',
+    errScanQR:'❌ Please scan a QR code',
+    errRequired:'❌ Please fill in all required fields',
+    errLocation:'❌ Please select a location',
+    errZone:'❌ Please select a zone',
+    errConflict:'❌ A model already exists there',
+    errDiscarded:'❌ Already discarded',
+    errNotFound:'❌ Unregistered QR code',
+    okRegistered:'✅ Model registered successfully',
+    okModified:'✅ Information updated',
+    okLocation:'📍 Location saved',
+    okDiscarded:'🗑 Model discarded',
+    confirmDiscard:'Are you sure you want to discard?',
+    confirmNo:'No', confirmYes:'Yes',
+    editMode:'Edit Mode', editLoaded:'📝 Existing info loaded. Edit and save.',
+    discardedCode:'Discarded', discardedModel:'Discarded',
+    underground:'Underground', exportLoc:'Export',
+    exportPlaceholder:'Enter destination (e.g. HQ Review)',
+  }
+};
+
+function _t(key){ return (_I18N[_lang] && _I18N[_lang][key]) ? _I18N[_lang][key] : (_I18N['ko'][key]||key); }
+
+function toggleLang() {
+  _lang = _lang === 'ko' ? 'en' : 'ko';
+  localStorage.setItem('kia_lang', _lang);
+  applyLang();
+}
+
+function applyLang() {
+  // 토글 버튼 텍스트 업데이트 (반대 언어 표시)
+  var btn = document.getElementById('lang-toggle-btn');
+  if(btn) btn.textContent = _lang === 'ko' ? 'EN' : 'KO';
+  // data-i18n 속성으로 일괄 적용
+  document.querySelectorAll('[data-i18n]').forEach(function(el){
+    var key = el.getAttribute('data-i18n');
+    var val = _t(key);
+    if(val) el.textContent = val;
+  });
+  // placeholder
+  document.querySelectorAll('[data-i18n-placeholder]').forEach(function(el){
+    var key = el.getAttribute('data-i18n-placeholder');
+    var val = _t(key);
+    if(val) el.placeholder = val;
+  });
+  // 동적으로 생성된 텍스트 업데이트
+  _updateDynamicTexts();
+}
+
+function _updateDynamicTexts() {
+  // QR 상태 표시들 (스캔 전 상태인 경우만)
+  var regVal = document.getElementById('reg-qr-val');
+  if(regVal && !scannedQR.register) regVal.textContent = _t('scanQR');
+  var regStat = document.getElementById('reg-qr-status');
+  if(regStat && regStat.classList.contains('waiting')) regStat.textContent = _t('waiting');
+  var locVal = document.getElementById('loc-qr-val');
+  if(locVal && !scannedQR.location) locVal.textContent = _t('scanModelQR');
+  var locStat = document.getElementById('loc-qr-status');
+  if(locStat && locStat.classList.contains('waiting')) locStat.textContent = _t('waiting');
+  var disVal = document.getElementById('dis-qr-val');
+  if(disVal && !scannedQR.discard) disVal.textContent = _t('scanQR');
+  var disStat = document.getElementById('dis-qr-status');
+  if(disStat && disStat.classList.contains('waiting')) disStat.textContent = _t('waiting');
+  // 위치등록 버튼
+  var locBtn = document.getElementById('loc-submit-btn');
+  if(locBtn && !locBtn.classList.contains('btn-loading')) locBtn.textContent = _t('locationBtn');
+  // 로그아웃
+  var logoutBtn = document.querySelector('.logout-btn');
+  if(logoutBtn) logoutBtn.textContent = _t('logout');
+  // 카메라 플립 버튼
+  document.querySelectorAll('.camera-flip-btn').forEach(function(b){
+    if(b.style.display !== 'none') b.textContent = _t('flipFront');
+  });
+  // 지하 ZONE 버튼
+  document.querySelectorAll('.loc-btn').forEach(function(b){
+    if(b.textContent.trim() === '지하 ZONE' || b.textContent.trim() === 'Underground') {
+      b.textContent = _t('underground');
+    }
+  });
+}
+// ────────────────────────────────────────────────────────
   {group:'지하',zones:['지하 ZONE']},
   {group:'스튜디오',zones:['메인 스튜디오','서브 스튜디오']},
   {group:'품평장',zones:['실내 품평장','실외 품평장']},
@@ -730,8 +881,8 @@ function goTo(id) {
     if(_qrResult) _qrResult.style.display = 'none';
     var _qrVal2 = document.getElementById('qrsearch-qr-val');
     var _qrStat2 = document.getElementById('qrsearch-qr-status');
-    if(_qrVal2) _qrVal2.textContent = 'QR 코드를 스캔하세요';
-    if(_qrStat2){ _qrStat2.textContent='대기중'; _qrStat2.className='qr-status waiting'; }
+    if(_qrVal2) _qrVal2.textContent = _t('scanQR');
+    if(_qrStat2){ _qrStat2.textContent=_t('waiting'); _qrStat2.className='qr-status waiting'; }
     scannedQR['qrsearch'] = '';
   }
   // 위치등록 화면 떠날때 모델정보 초기화
@@ -740,8 +891,8 @@ function goTo(id) {
     if(_locInfo) _locInfo.style.display = 'none';
     var _locQrVal = document.getElementById('loc-qr-val');
     var _locQrStat = document.getElementById('loc-qr-status');
-    if(_locQrVal) _locQrVal.textContent = '모델 QR 코드를 스캔하세요';
-    if(_locQrStat){ _locQrStat.textContent='대기중'; _locQrStat.className='qr-status waiting'; }
+    if(_locQrVal) _locQrVal.textContent = _t('scanModelQR');
+    if(_locQrStat){ _locQrStat.textContent=_t('waiting'); _locQrStat.className='qr-status waiting'; }
     scannedQR['location'] = '';
     selectedLocation = '';
     document.querySelectorAll('.loc-btn').forEach(function(b){b.classList.remove('selected');});
@@ -752,7 +903,7 @@ function goTo(id) {
     if(_expWrap)_expWrap.style.display='none';
     if(_expInput)_expInput.value='';
     var _locBtn = document.getElementById('loc-submit-btn');
-    if(_locBtn){_locBtn.textContent='디자인 모델 위치 등록';_locBtn.disabled=false;_locBtn.classList.remove('btn-loading');}
+    if(_locBtn){_locBtn.textContent=_t('locationBtn');_locBtn.disabled=false;_locBtn.classList.remove('btn-loading');}
   }
 }
 
@@ -779,12 +930,12 @@ function openQR(mode) {
   if(mode==='register') {
     scannedQR.register = '';
     var regStat = document.getElementById('reg-qr-status');
-    if(regStat){ regStat.textContent='대기중'; regStat.className='qr-status waiting'; }
+    if(regStat){ regStat.textContent=_t('waiting'); regStat.className='qr-status waiting'; }
     var regVal = document.getElementById('reg-qr-val');
-    if(regVal) regVal.textContent='QR 코드를 스캔하세요';
+    if(regVal) regVal.textContent=_t('scanQR');
     // 버튼 초기화
     var regBtn = document.querySelector('#screen-register .submit-btn');
-    if(regBtn){ regBtn.textContent='디자인 모델 등록'; regBtn.style.background=''; regBtn.disabled=false; }
+    if(regBtn){ regBtn.textContent=_t('registerBtn'); regBtn.style.background=''; regBtn.disabled=false; }
     // 폼 필드 초기화
     var proj = document.getElementById('reg-project'); if(proj) proj.value='';
     var comp = document.getElementById('reg-company'); if(comp) comp.value='';
@@ -798,13 +949,13 @@ function openQR(mode) {
   }
   else if(mode==='location') {
     scannedQR.location = ''; selectedLocation = '';
-    var locStat=document.getElementById('loc-qr-status'); if(locStat){locStat.textContent='대기중';locStat.className='qr-status waiting';}
-    var locVal=document.getElementById('loc-qr-val'); if(locVal)locVal.textContent='QR 코드를 스캔하세요';
+    var locStat=document.getElementById('loc-qr-status'); if(locStat){locStat.textContent=_t('waiting');locStat.className='qr-status waiting';}
+    var locVal=document.getElementById('loc-qr-val'); if(locVal)locVal.textContent=_t('scanModelQR');
     var locInfo=document.getElementById('loc-model-info'); if(locInfo)locInfo.style.display='none';
     document.querySelectorAll('.loc-btn').forEach(function(b){b.classList.remove('selected');b.style.borderColor='';b.style.background='';b.style.color='';});
     var expWrap=document.getElementById('export-input-wrap'); if(expWrap)expWrap.style.display='none';
     var expInput=document.getElementById('export-location-text'); if(expInput)expInput.value='';
-    var locBtn=document.getElementById('loc-submit-btn'); if(locBtn){locBtn.textContent='디자인 모델 위치 등록';locBtn.disabled=false;locBtn.classList.remove('btn-loading');}
+    var locBtn=document.getElementById('loc-submit-btn'); if(locBtn){locBtn.textContent=_t('locationBtn');locBtn.disabled=false;locBtn.classList.remove('btn-loading');}
     // Firebase 실시간 구독으로 자동 처리됨
     goTo('screen-location');
   }
@@ -814,9 +965,9 @@ function openQR(mode) {
     var disInfo = document.getElementById('discard-info');
     if(disInfo) disInfo.style.display = 'none';
     var disStat = document.getElementById('dis-qr-status');
-    if(disStat){ disStat.textContent='대기중'; disStat.className='qr-status waiting'; }
+    if(disStat){ disStat.textContent=_t('waiting'); disStat.className='qr-status waiting'; }
     var disVal = document.getElementById('dis-qr-val');
-    if(disVal) disVal.textContent='QR 코드를 스캔하세요';
+    if(disVal) disVal.textContent=_t('scanQR');
     var disBtn = document.getElementById('discard-btn');
     if(disBtn){ disBtn.textContent='🗑 폐기 처리'; disBtn.disabled=false; disBtn.style.display='none'; }
     // 검색 탭 초기화
@@ -996,8 +1147,8 @@ function onQRSuccess(mode, text) {
           showConfirm('⛔ 폐기된 QR코드입니다\n\n다시 스캔하시겠습니까?', function() {
             scannedQR['register'] = '';
             var _qrVal=document.getElementById('reg-qr-val'); var _qrStat=document.getElementById('reg-qr-status');
-            if(_qrVal)_qrVal.textContent='QR 코드를 스캔하세요';
-            if(_qrStat){_qrStat.textContent='대기중';_qrStat.className='qr-status waiting';}
+            if(_qrVal)_qrVal.textContent=_t('scanQR');
+            if(_qrStat){_qrStat.textContent=_t('waiting');_qrStat.className='qr-status waiting';}
             stopQR('register'); setTimeout(function(){startQR('register','qr-reader');},300);
           }, function(){scannedQR['register']='';stopQR('register');goTo('screen-home');});
           return;
@@ -1279,7 +1430,7 @@ function buildLocationGrid() {
     var btn=document.createElement('button');
     btn.className='loc-btn';
     // 지하 ZONE은 특별 아이콘 표시
-    btn.textContent = zone === '지하 ZONE' ? '지하 ZONE' : zone;
+    btn.textContent = zone === '지하 ZONE' ? _t('underground') : zone;
     if(zone === '지하 ZONE') btn.style.cssText='grid-column:1/-1;width:100%;';
     btn.onclick=function(){
       // 지하 ZONE → 이미지 팝업
@@ -1467,7 +1618,7 @@ function selectUGSubZone(zid) {
   var grid = document.getElementById('parking-lot-grid');
   var confirmBtn = document.getElementById('parking-confirm-btn');
   document.getElementById('parking-zone-title').textContent = zone;
-  if(confirmBtn){confirmBtn.textContent='디자인 모델 위치 등록';confirmBtn.disabled=false;confirmBtn.classList.remove('btn-loading');confirmBtn.style.pointerEvents='auto';}
+  if(confirmBtn){confirmBtn.textContent=_t('locationBtn');confirmBtn.disabled=false;confirmBtn.classList.remove('btn-loading');confirmBtn.style.pointerEvents='auto';}
 
   // 항상 4열 기준 셀 크기 — 열 수 적은 존은 전체 폭의 (cols/4) 비율로 그리드 폭 조정 → 카드 크기 동일
   var cols = p.cols;
@@ -1782,8 +1933,8 @@ function submitLocation() {
 }
 
 function _doSubmitLocation() {
-  if(!scannedQR.location){showToast('❌ QR 코드를 스캔해주세요');return;}
-  if(!selectedLocation){showToast('❌ 보관 위치를 선택해주세요');return;}
+  if(!scannedQR.location){showToast(_t('errScanQR'));return;}
+  if(!selectedLocation){showToast(_t('errLocation'));return;}
   var _locBtn=document.getElementById('loc-submit-btn');
   if(_locBtn){_locBtn.textContent='위치 등록 중...';_locBtn.disabled=true;_locBtn.classList.add('btn-loading');}
   _setProcessing(true);
@@ -1796,15 +1947,15 @@ function _doSubmitLocation() {
   }).then(function(){
     _setProcessing(false);
     if(_locBtn){_locBtn.textContent='등록 완료 ✅';_locBtn.classList.remove('btn-loading');}
-    showToast('📍 위치가 등록되었습니다');
+    showToast(_t('okLocation'));
     var _locEl=document.getElementById('loc-m-loc');if(_locEl)_locEl.textContent='📍 '+selectedLocation;
     setTimeout(function(){
-      if(_locBtn){_locBtn.textContent='디자인 모델 위치 등록';_locBtn.disabled=false;_locBtn.classList.remove('btn-loading');}
+      if(_locBtn){_locBtn.textContent=_t('locationBtn');_locBtn.disabled=false;_locBtn.classList.remove('btn-loading');}
       stopQR('location');goTo('screen-home');
     },1000);
   }).catch(function(e){
     _setProcessing(false);
-    if(_locBtn){_locBtn.textContent='디자인 모델 위치 등록';_locBtn.disabled=false;_locBtn.classList.remove('btn-loading');}
+    if(_locBtn){_locBtn.textContent=_t('locationBtn');_locBtn.disabled=false;_locBtn.classList.remove('btn-loading');}
     showToast('❌ '+e.message);
   });
 }
@@ -1837,7 +1988,7 @@ function submitDiscard() {
   }).then(function(){
     _setProcessing(false);
     if(_disBtn){_disBtn.textContent='폐기 완료 ✅';}
-    showToast('🗑 폐기 처리되었습니다');
+    showToast(_t('okDiscarded'));
     scannedQR.discard='';
     setTimeout(function(){stopQR('discard');goTo('screen-home');},1000);
   }).catch(function(e){
@@ -1853,11 +2004,11 @@ function submitRegister() {
   if(_isProcessing){showToast('⏳ 처리 중입니다.');return;}
   var _regBtn=document.querySelector('#screen-register .submit-btn');
   var isEditMode=_regBtn&&_regBtn.textContent.trim()==='정보 수정';
-  if(!scannedQR.register){showToast('❌ QR 코드를 스캔해주세요');return;}
+  if(!scannedQR.register){showToast(_t('errScanQR'));return;}
   var project=document.getElementById('reg-project').value.trim();
   var company=document.getElementById('reg-company').value.trim();
   var date=document.getElementById('reg-date').value;
-  if(!project||!company||!date){showToast('❌ 필수 항목을 입력해주세요');return;}
+  if(!project||!company||!date){showToast(_t('errRequired'));return;}
   var memo=document.getElementById('reg-memo').value.trim();
   if(_regBtn){_regBtn.textContent=isEditMode?'수정 중...':'등록 중...';_regBtn.disabled=true;_regBtn.classList.add('btn-loading');}
   _setProcessing(true);
@@ -1877,7 +2028,7 @@ function submitRegister() {
   }).then(function(){
     _setProcessing(false);
     if(_regBtn){_regBtn.textContent=isEditMode?'수정 완료 ✅':'등록 완료 ✅';_regBtn.classList.remove('btn-loading');}
-    showToast(isEditMode?'✅ 정보가 수정되었습니다':'✅ 디자인 모델이 등록되었습니다');
+    showToast(isEditMode?_t('okModified'):_t('okRegistered'));
     setTimeout(function(){stopQR('register');goTo('screen-home');},1000);
   }).catch(function(e){
     _setProcessing(false);
@@ -2343,8 +2494,8 @@ function showConfirm(msg, onYes, onNo) {
   }).join('');
   box.innerHTML = msgHtml +
     '<div style="display:flex;gap:10px;">' +
-    '<button id="confirm-no" style="flex:1;padding:12px;border:1px solid #ddd;border-radius:10px;background:#f5f5f5;font-size:15px;font-weight:600;cursor:pointer;font-family:Pretendard,sans-serif;">아니오</button>' +
-    '<button id="confirm-yes" style="flex:1;padding:12px;border:none;border-radius:10px;background:#000;color:#fff;font-size:15px;font-weight:600;cursor:pointer;font-family:Pretendard,sans-serif;">예</button>' +
+    '<button id="confirm-no" style="flex:1;padding:12px;border:1px solid #ddd;border-radius:10px;background:#f5f5f5;font-size:15px;font-weight:600;cursor:pointer;font-family:Pretendard,sans-serif;">'+_t('confirmNo')+'</button>' +
+    '<button id="confirm-yes" style="flex:1;padding:12px;border:none;border-radius:10px;background:#000;color:#fff;font-size:15px;font-weight:600;cursor:pointer;font-family:Pretendard,sans-serif;">'+_t('confirmYes')+'</button>' +
     '</div>';
   overlay.appendChild(box);
   document.body.appendChild(overlay);
@@ -2355,6 +2506,11 @@ function showLoading(show){document.getElementById('loading-overlay').style.disp
 
 // 자동 로그인 초기화 (모든 함수 정의 후 실행)
 (function(){
+  // 언어 설정 복원
+  var savedLang = localStorage.getItem('kia_lang');
+  if(savedLang === 'en') { _lang = 'en'; }
+  applyLang();
+
   // 아이디 저장 복원
   var savedId = localStorage.getItem('savedId');
   var idEl = document.getElementById('login-id');
@@ -2379,7 +2535,7 @@ function showLoading(show){document.getElementById('loading-overlay').style.disp
 
   // 세션 없으면 로그인 버튼 정상화
   var loginBtn = document.querySelector('.login-btn');
-  if(loginBtn){loginBtn.textContent='로그인';loginBtn.disabled=false;loginBtn.classList.remove('btn-loading');}
+  if(loginBtn){loginBtn.textContent=_lang==='ko'?'로그인':'Log in';loginBtn.disabled=false;loginBtn.classList.remove('btn-loading');}
 })();
 
 
@@ -2415,7 +2571,7 @@ function openParkingOverlay(zone) {
   _parkingSpot = '';
   document.getElementById('parking-zone-title').textContent = zone;
   var confirmBtn=document.getElementById('parking-confirm-btn');
-  if(confirmBtn){confirmBtn.textContent='디자인 모델 위치 등록';confirmBtn.disabled=false;confirmBtn.removeAttribute('disabled');confirmBtn.classList.remove('btn-loading');confirmBtn.style.pointerEvents='auto';}
+  if(confirmBtn){confirmBtn.textContent=_t('locationBtn');confirmBtn.disabled=false;confirmBtn.removeAttribute('disabled');confirmBtn.classList.remove('btn-loading');confirmBtn.style.pointerEvents='auto';}
   var grid = document.getElementById('parking-lot-grid');
   grid.innerHTML = '';
   spots.forEach(function(spot) {
@@ -2466,8 +2622,8 @@ function closeParkingOverlay(e) {
 }
 
 function confirmParkingSpot() {
-  if (!scannedQR.location) { showToast('❌ QR 코드를 먼저 스캔해주세요'); document.getElementById('parking-overlay').style.display='none'; return; }
-  if (!_parkingSpot) { showToast('❌ 구역을 선택해주세요'); return; }
+  if (!scannedQR.location) { showToast(_t('errScanQR')); document.getElementById('parking-overlay').style.display='none'; return; }
+  if (!_parkingSpot) { showToast(_t('errZone')); return; }
   var full = _parkingZone + ' ' + _parkingSpot;
   if (_parkingZone.indexOf('지하 ') === 0 && typeof MODELS !== 'undefined' && MODELS && MODELS.length > 0) {
     var conflict = MODELS.filter(function(m){return m.status!=='폐기' && m.location===full && m.qrId!==scannedQR.location;});
@@ -2553,7 +2709,7 @@ document.getElementById('reg-date').valueAsDate=new Date();
     <div style="font-size:16px;font-weight:700;margin-bottom:4px;" id="parking-zone-title"></div>
     <div style="font-size:12px;color:#8E8E93;margin-bottom:12px;">모델이 위치한 구역을 선택해주세요</div>
     <div class="parking-lot" id="parking-lot-grid"></div>
-    <button class="parking-confirm" id="parking-confirm-btn" onclick="confirmParkingSpot()">디자인 모델 위치 등록</button>
+    <button class="parking-confirm" id="parking-confirm-btn" onclick="confirmParkingSpot()" data-i18n="locationBtn">디자인 모델 위치 등록</button>
   </div>
 </div>
 
