@@ -902,6 +902,8 @@ function _updateDynamicTexts() {
   if(rc) rc.placeholder = _t('makerPlaceholder');
   var ugTitle = document.getElementById('ug-select-title');
   if(ugTitle) ugTitle.textContent = _t('ugSelectTitle');
+  var pSub = document.getElementById('parking-zone-sub');
+  if(pSub) pSub.textContent = _t('ugSelectSub');
 }
 // ────────────────────────────────────────────────────────
 // ── 존 이름 번역 헬퍼 ─────────────────────────────────
@@ -932,6 +934,18 @@ function _tGroup(koGroup) {
     '외부 외장':'Ext. Exterior','외부 내장':'Ext. Interior','외부 반출':'Export'
   };
   return map[koGroup] || koGroup;
+}
+// DB 저장된 위치값 번역 (예: '지하 A ZONE A-2' → 'Underground A - 2')
+function _tLocation(loc) {
+  if(!loc || _lang === 'ko') return loc || '';
+  // 지하 X ZONE Y-N 형태 처리
+  var ugMatch = loc.match(/^지하 ([A-E]) ZONE ([A-E])-(\d+)$/);
+  if(ugMatch) return 'Underground ' + ugMatch[1] + ' - ' + ugMatch[3];
+  // 외부 반출(목적지) 형태
+  if(loc.indexOf('외부 반출(') === 0) return 'Export(' + loc.slice(6);
+  if(loc === '외부 반출') return 'Export';
+  // 나머지는 _tZone으로
+  return _tZone(loc);
 }
 // ────────────────────────────────────────────────────────
 
@@ -1222,7 +1236,7 @@ function onQRSuccess(mode, text) {
         _e=document.getElementById('qs-type');     if(_e)_e.textContent=m.type||'-';
         _e=document.getElementById('qs-material'); if(_e)_e.textContent=m.material||'-';
         _e=document.getElementById('qs-company');  if(_e)_e.textContent=m.company||'-';
-        _e=document.getElementById('qs-location'); if(_e)_e.textContent=m.location||'미등록';
+        _e=document.getElementById('qs-location'); if(_e)_e.textContent=_tLocation(m.location)||_t('unregistered');
         _e=document.getElementById('qs-date');     if(_e)_e.textContent=formatDate(m.inDate);
         var _statusDisplay = document.getElementById('qs-status-display');
         if(_statusDisplay){_statusDisplay.textContent=isDiscarded?_t('statusDiscarded'):(m.status==='보관중'?_t('statusStored'):(m.status||_t('statusStored')));_statusDisplay.style.color=isDiscarded?'var(--danger)':'var(--success)';}
@@ -1295,7 +1309,7 @@ function onQRSuccess(mode, text) {
         _e=document.getElementById('loc-m-type-tag'); if(_e){_e.textContent=m.type||'-';_e.className='type-tag '+(m.type||'').toLowerCase();}
         _e=document.getElementById('loc-m-stage-tag'); if(_e)_e.textContent=m.stage||'-';
         _e=document.getElementById('loc-m-material-tag'); if(_e)_e.textContent=m.material||'-';
-        _e=document.getElementById('loc-m-loc'); if(_e)_e.textContent='📍 '+(m.location||_t('noLocation'));
+        _e=document.getElementById('loc-m-loc'); if(_e)_e.textContent='📍 '+(_tLocation(m.location)||_t('noLocation'));
         _e=document.getElementById('loc-m-company'); if(_e)_e.textContent=m.company||'-';
         _e=document.getElementById('loc-m-indate'); if(_e)_e.textContent=formatDate(m.inDate);
         if(infoDiv)infoDiv.style.display='block';
@@ -1318,7 +1332,7 @@ function onQRSuccess(mode, text) {
         _e=document.getElementById('dc-type');    if(_e)_e.textContent=m.type||'-';
         _e=document.getElementById('dc-material'); if(_e)_e.textContent=m.material||'-';
         _e=document.getElementById('dc-company'); if(_e)_e.textContent=m.company||'-';
-        _e=document.getElementById('dc-loc');     if(_e)_e.textContent=m.location||'미등록';
+        _e=document.getElementById('dc-loc');     if(_e)_e.textContent=_tLocation(m.location)||_t('unregistered');
         _e=document.getElementById('dc-date');    if(_e)_e.textContent=formatDate(m.inDate);
         document.getElementById('discard-info').style.display='block';
         document.getElementById('discard-btn').style.display='block';
@@ -1666,7 +1680,7 @@ function showZoneDetail(zone, models) {
       h+='<div class="model-card">';
       h+='<div class="card-top"><div class="model-name">'+m.project+'</div>';
       h+='<div style="display:flex;align-items:center;flex-wrap:wrap;gap:4px;"><span class="type-tag '+m.type.toLowerCase()+'">'+m.type+'</span>'+stg+mat+'</div></div>';
-      h+='<div class="location-row">📍 '+(m.location||zone)+'</div>';
+      h+='<div class="location-row">📍 '+(_tLocation(m.location)||_tZone(zone))+'</div>';
       h+='<div class="meta-row"><div class="meta-item">'+_t('mfrShort')+' <span>'+m.company+'</span></div><div class="meta-item">'+_t('reviewShort')+' <span>'+formatDate(m.inDate)+'</span></div></div>';
       h+='</div>';
     });
@@ -1911,7 +1925,7 @@ function onParkingSpotClick(spot, zone) {
   _e=document.getElementById('azd-type');     if(_e)_e.textContent=m.type||'-';
   _e=document.getElementById('azd-material'); if(_e)_e.textContent=m.material||'-';
   _e=document.getElementById('azd-company');  if(_e)_e.textContent=m.company||'-';
-  _e=document.getElementById('azd-location'); if(_e)_e.textContent=m.location||'-';
+  _e=document.getElementById('azd-location'); if(_e)_e.textContent=_tLocation(m.location)||'-';
   _e=document.getElementById('azd-status');   if(_e){ _e.textContent=m.status==='보관중'?_t('statusStored'):(m.status==='폐기'?_t('statusDiscarded'):(m.status||_t('statusStored'))); }
   _e=document.getElementById('azd-date');     if(_e)_e.textContent=formatDate(m.inDate);
   var overlay = document.getElementById('azone-detail-overlay');
@@ -2029,7 +2043,7 @@ function renderList(models) {
   var c=document.getElementById('model-list-view');
   if(!c)return;
   if(!models||models.length===0){c.innerHTML='<div style="text-align:center;padding:48px 20px;color:#C7C7CC;font-size:14px;"><div style="font-size:40px;margin-bottom:12px;">📭</div>등록된 모델이 없습니다</div>';return;}
-  var _h='';for(var _i=0;_i<models.length;_i++){var _m=models[_i];if(_m.status==='폐기')continue;var _loc=_m.location||_t('noLocation');var _stg=_m.stage?'<span class="type-tag" style="background:#E8F0FE;color:#1a73e8;margin-left:4px;">'+_m.stage+'</span>':'';var _mat=_m.material?'<span class="type-tag" style="background:#F2F2F7;color:#555;margin-left:4px;">'+_m.material+'</span>':'';_h+='<div class="model-card"><div class="card-top"><div class="model-name">'+_m.project+'</div><div style="display:flex;align-items:center;flex-wrap:wrap;gap:4px;"><span class="type-tag '+_m.type.toLowerCase()+'">'+_m.type+'</span>'+_stg+_mat+'</div></div><div class="location-row">📍 '+_loc+'</div><div class="meta-row"><div class="meta-item">'+_t('mfrShort')+' <span>'+_m.company+'</span></div><div class="meta-item">'+_t('reviewShort')+' <span>'+formatDate(_m.inDate)+'</span></div></div></div>';}c.innerHTML=_h;
+  var _h='';for(var _i=0;_i<models.length;_i++){var _m=models[_i];if(_m.status==='폐기')continue;var _loc=_tLocation(_m.location)||_t('noLocation');var _stg=_m.stage?'<span class="type-tag" style="background:#E8F0FE;color:#1a73e8;margin-left:4px;">'+_m.stage+'</span>':'';var _mat=_m.material?'<span class="type-tag" style="background:#F2F2F7;color:#555;margin-left:4px;">'+_m.material+'</span>':'';_h+='<div class="model-card"><div class="card-top"><div class="model-name">'+_m.project+'</div><div style="display:flex;align-items:center;flex-wrap:wrap;gap:4px;"><span class="type-tag '+_m.type.toLowerCase()+'">'+_m.type+'</span>'+_stg+_mat+'</div></div><div class="location-row">📍 '+_loc+'</div><div class="meta-row"><div class="meta-item">'+_t('mfrShort')+' <span>'+_m.company+'</span></div><div class="meta-item">'+_t('reviewShort')+' <span>'+formatDate(_m.inDate)+'</span></div></div></div>';}c.innerHTML=_h;
 }
 
 
@@ -2285,7 +2299,7 @@ function doDiscardSearch() {
 function renderDiscardResults(models, container) {
   var html2 = '';
   models.forEach(function(m) {
-    var loc = m.location || '위치 미등록';
+    var loc = _tLocation(m.location) || _t('noLocation');
     var stg = m.stage ? '<span class="type-tag" style="background:#E8F0FE;color:#1a73e8;margin-left:4px;">'+m.stage+'</span>' : '';
     var mat = m.material ? '<span class="type-tag" style="background:#F2F2F7;color:#555;margin-left:4px;">'+m.material+'</span>' : '';
     html2 += '<div id="dc-item-'+m.qrId+'" style="background:var(--card);border-radius:12px;padding:14px 16px;margin-bottom:8px;cursor:pointer;border:2px solid var(--line);transition:border-color 0.2s,background 0.2s;" onclick="toggleDiscardSelect(this)"' +
