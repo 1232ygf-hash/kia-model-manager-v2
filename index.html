@@ -38,8 +38,9 @@ body{background:var(--bg);color:var(--text);font-family:'Pretendard',sans-serif;
 .screen{display:none;min-height:100vh;flex-direction:column;}
 .screen.active{display:flex;}
 .top-bar{display:flex;align-items:center;justify-content:space-between;padding:14px 20px 10px;background:rgba(242,242,247,0.92);backdrop-filter:blur(20px);-webkit-backdrop-filter:blur(20px);border-bottom:1px solid var(--line);position:sticky;top:0;z-index:100;}
-.back-btn{display:flex;align-items:center;gap:4px;background:none;border:none;cursor:pointer;color:var(--info);font-family:'Bebas Neue',sans-serif;font-size:18px;font-weight:400;padding:4px 0;letter-spacing:1px;}
-.top-bar-title{font-weight:600;font-size:20px;color:var(--text);font-family:'Bebas Neue',sans-serif;letter-spacing:1.5px;}
+.top-bar::after{content:'';display:none;} /* top-bar 내부 absolute 기준점용 */
+.back-btn{display:flex;align-items:center;gap:4px;background:none;border:none;cursor:pointer;color:var(--info);font-family:'Bebas Neue',sans-serif;font-size:15px;font-weight:400;padding:4px 0;letter-spacing:1px;}
+.top-bar-title{font-weight:600;font-size:20px;color:var(--text);font-family:'Bebas Neue',sans-serif;letter-spacing:1.5px;position:absolute;left:50%;transform:translateX(-50%);white-space:nowrap;}
 .right-slot{width:44px;display:flex;justify-content:flex-end;}
 .content{flex:1;padding:0;overflow-y:auto;padding-bottom:48px;}
 
@@ -565,8 +566,8 @@ input[type="date"].form-input-inline{color-scheme:light;text-align:right;}
     <div class="top-bar-title" id="zone-detail-title">구역 상세</div>
     <div class="right-slot"></div>
   </div>
-  <div class="content">
-    <div id="zone-detail-list"></div>
+  <div class="content" id="zone-detail-content" style="overflow:hidden;padding-bottom:0;">
+    <div id="zone-detail-list" style="height:100%;"></div>
   </div>
 </div>
 
@@ -1278,7 +1279,7 @@ function buildLocationGrid() {
     var btn=document.createElement('button');
     btn.className='loc-btn';
     // 지하 ZONE은 특별 아이콘 표시
-    btn.textContent = zone === '지하 ZONE' ? '🅿 지하 ZONE' : zone;
+    btn.textContent = zone === '지하 ZONE' ? '지하 ZONE' : zone;
     if(zone === '지하 ZONE') btn.style.cssText='grid-column:1/-1;width:100%;';
     btn.onclick=function(){
       // 지하 ZONE → 이미지 팝업
@@ -1394,6 +1395,8 @@ function showZoneDetail(zone, models) {
   var title = document.getElementById('zone-detail-title');
   if(title) title.textContent = (zone && zone.indexOf('외부 반출') === 0) ? '외부 반출' : zone;
   var list = document.getElementById('zone-detail-list');
+  var content = document.getElementById('zone-detail-content');
+  if(content){ content.style.overflow='auto'; content.style.paddingBottom='48px'; }
   if(!list) return;
   if(models.length === 0){
     list.innerHTML = '<div style="text-align:center;padding:48px 20px;color:#C7C7CC;font-size:14px;"><div style="font-size:40px;margin-bottom:12px;">📭</div>이 구역에 모델이 없습니다</div>';
@@ -1509,6 +1512,8 @@ function showUndergroundZoneList(models) {
   var title = document.getElementById('zone-detail-title');
   if(title) title.textContent = '지하 ZONE';
   var list = document.getElementById('zone-detail-list');
+  var content = document.getElementById('zone-detail-content');
+  if(content){ content.style.overflow='auto'; content.style.paddingBottom='48px'; }
   if(!list) return;
 
   var html = '<div style="padding:16px 16px 0;">';
@@ -1538,6 +1543,8 @@ function showParkingGrid(zone, models) {
   var title = document.getElementById('zone-detail-title');
   if(title) title.textContent = zone;
   var list = document.getElementById('zone-detail-list');
+  var content = document.getElementById('zone-detail-content');
+  if(content){ content.style.overflow='hidden'; content.style.paddingBottom='0'; }
   if(!list) return;
 
   var spotCount = p.spots;
@@ -1552,28 +1559,29 @@ function showParkingGrid(zone, models) {
     }
   });
 
-  var html = '<div style="padding:16px;">';
-  // 뒤로가기 (지하 ZONE 목록)
-  html += '<button onclick="showUndergroundZoneList(MODELS)" style="font-size:12px;color:#8E8E93;background:none;border:0.5px solid #C7C7CC;border-radius:20px;padding:4px 12px;cursor:pointer;font-family:\'Pretendard\',sans-serif;margin-bottom:12px;">← 전체 보기</button>';
-  html += '<div style="background:#F2F2F7;border:2px solid #E5E5EA;border-radius:20px;padding:12px;display:grid;grid-template-columns:repeat('+cols+',1fr);gap:8px;">';
+  var rows = Math.ceil(spotCount / cols);
+  var html = '<div style="padding:10px 12px;display:flex;flex-direction:column;height:calc(100vh - 120px);">';
+  // 뒤로가기
+  html += '<button onclick="showUndergroundZoneList(MODELS)" style="font-size:12px;color:#8E8E93;background:none;border:0.5px solid #C7C7CC;border-radius:20px;padding:4px 12px;cursor:pointer;font-family:\'Pretendard\',sans-serif;margin-bottom:10px;align-self:flex-start;">← 전체 보기</button>';
+  html += '<div style="background:#F2F2F7;border:2px solid #E5E5EA;border-radius:20px;padding:10px;flex:1;display:grid;grid-template-columns:repeat('+cols+',1fr);grid-template-rows:repeat('+rows+',1fr);gap:6px;">';
 
   for(var i=1;i<=spotCount;i++){
     var spot = zid+'-'+i;
     var m = spotMap[spot];
     var occupied = !!m;
 
-    html += '<div onclick="'+(occupied?'onParkingSpotClick(\''+spot+'\',\''+zone+'\')':'')+(occupied?'':'')+'" style="cursor:'+(occupied?'pointer':'default')+';display:flex;justify-content:center;width:100%;">';
-    html += '<div style="width:100%;aspect-ratio:2/3;background:'+(occupied?'#1C1C1E':'#fff')+';border:2px solid '+(occupied?'#1C1C1E':'#C7C7CC')+';border-radius:18px;padding:4px;position:relative;display:flex;align-items:center;justify-content:center;">';
-    html += '<div style="width:100%;height:100%;background:'+(occupied?'#3A3A3C':'#F8F8F8')+';border:1.5px solid '+(occupied?'#555':'#D1D1D6')+';border-radius:13px;display:flex;flex-direction:column;align-items:center;justify-content:center;padding:6px 4px;gap:3px;">';
+    html += '<div onclick="'+(occupied?'onParkingSpotClick(\''+spot+'\',\''+zone+'\')':'')+'" style="cursor:'+(occupied?'pointer':'default')+';display:flex;justify-content:center;align-items:center;">';
+    html += '<div style="width:100%;height:100%;background:'+(occupied?'#1C1C1E':'#fff')+';border:2px solid '+(occupied?'#1C1C1E':'#C7C7CC')+';border-radius:14px;padding:3px;position:relative;display:flex;align-items:center;justify-content:center;">';
+    html += '<div style="width:100%;height:100%;background:'+(occupied?'#3A3A3C':'#F8F8F8')+';border:1.5px solid '+(occupied?'#555':'#D1D1D6')+';border-radius:10px;display:flex;flex-direction:column;align-items:center;justify-content:center;padding:4px;gap:2px;">';
     if(occupied){
-      html += '<span style="font-size:'+(cols===4?'10':'12')+'px;font-weight:800;color:#fff;text-align:center;word-break:break-all;line-height:1.2;">'+m.project+'</span>';
-      html += '<span style="font-size:9px;font-weight:400;color:rgba(255,255,255,0.55);text-align:center;">'+spot+'</span>';
+      html += '<span style="font-size:'+(cols===4?'9':'11')+'px;font-weight:800;color:#fff;text-align:center;word-break:break-all;line-height:1.2;">'+m.project+'</span>';
+      html += '<span style="font-size:8px;font-weight:400;color:rgba(255,255,255,0.55);text-align:center;">'+spot+'</span>';
     } else {
-      html += '<span style="font-size:'+(cols===4?'12':'15')+'px;font-weight:700;color:#1C1C1E;">'+i+'</span>';
+      html += '<span style="font-size:'+(cols===4?'13':'16')+'px;font-weight:700;color:#1C1C1E;">'+i+'</span>';
     }
     html += '</div>';
-    html += '<div style="position:absolute;left:-6px;bottom:28%;width:6px;height:10px;background:'+(occupied?'#48484A':'#E5E5EA')+';border:1.5px solid '+(occupied?'#666':'#C7C7CC')+';border-radius:3px 0 0 3px;"></div>';
-    html += '<div style="position:absolute;right:-6px;bottom:28%;width:6px;height:10px;background:'+(occupied?'#48484A':'#E5E5EA')+';border:1.5px solid '+(occupied?'#666':'#C7C7CC')+';border-radius:0 3px 3px 0;"></div>';
+    html += '<div style="position:absolute;left:-5px;bottom:28%;width:5px;height:8px;background:'+(occupied?'#48484A':'#E5E5EA')+';border:1.5px solid '+(occupied?'#666':'#C7C7CC')+';border-radius:3px 0 0 3px;"></div>';
+    html += '<div style="position:absolute;right:-5px;bottom:28%;width:5px;height:8px;background:'+(occupied?'#48484A':'#E5E5EA')+';border:1.5px solid '+(occupied?'#666':'#C7C7CC')+';border-radius:0 3px 3px 0;"></div>';
     html += '</div></div>';
   }
   html += '</div></div>';
@@ -2422,7 +2430,7 @@ function confirmParkingSpot() {
   // 위치 선택 반영 - "지하 ZONE" 버튼 selected 처리
   document.querySelectorAll('.loc-btn').forEach(function(b){b.classList.remove('selected');});
   document.querySelectorAll('.loc-btn').forEach(function(b){
-    if(b.textContent.trim()==='🅿 지하 ZONE') b.classList.add('selected');
+    if(b.textContent.trim()==='지하 ZONE') b.classList.add('selected');
   });
   selectedLocation = full;
 
