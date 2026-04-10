@@ -385,7 +385,7 @@ input[type="date"].form-input-inline{color-scheme:light;text-align:right;}
             <button class="mat-btn" onclick="selectMaterial(this,'CLAY+HARD')">CLAY+HARD</button>
           </div>
         </div>
-        <div class="form-row"><label data-i18n="manufacturer">제작회사 <span class="req">*</span></label><input type="text" class="form-input-inline" id="reg-company" placeholder="(주)다이나믹"></div>
+        <div class="form-row"><label data-i18n="manufacturer">제작회사 <span class="req">*</span></label><input type="text" class="form-input-inline" id="reg-company" data-i18n-placeholder="makerPlaceholder" placeholder="(주)다이나믹"></div>
         <div class="form-row"><label data-i18n="reviewDate">품평일자 <span class="req">*</span></label><input type="date" class="form-input-inline" id="reg-date"></div>
         <div class="form-row" style="align-items:flex-start;"><label style="padding-top:14px;" data-i18n="memo">메모</label><textarea class="form-input-inline" id="reg-memo" data-i18n-placeholder="memoPlaceholder" placeholder="특이사항 입력..."></textarea></div>
       </div>
@@ -750,6 +750,11 @@ var _I18N = {
     // 상태
     noModels:'이 구역에 모델이 없습니다', noLocation:'위치 미등록', emptyZone:'빈 구역',
     mfrShort:'제작사', reviewShort:'품평일',
+    totalCount:'총합',
+    ugSelectTitle:'지하 주차장 — ZONE 선택',
+    ugSelectSub:'모델이 위치한 구역을 선택해주세요',
+    ugEmpty:'비어있음', ugCount:'대',
+    makerPlaceholder:'(주)다이나믹',
   },
   en: {
     backHome:'‹ Home', backBtn:'‹ Back', waiting:'Waiting', scanQR:'Scan QR code',
@@ -810,6 +815,11 @@ var _I18N = {
     zoneIndoorShow:'Indoor Showroom', zoneOutdoorShow:'Outdoor Showroom',
     noModels:'No models in this zone', noLocation:'Location not set', emptyZone:'Empty',
     mfrShort:'Maker', reviewShort:'Review',
+    totalCount:'Total',
+    ugSelectTitle:'Underground Parking — Select Zone',
+    ugSelectSub:'Select the zone where the model is located',
+    ugEmpty:'Empty', ugCount:'',
+    makerPlaceholder:'e.g. Dynamic Corp.',
   }
 };
 
@@ -888,6 +898,10 @@ function _updateDynamicTexts() {
   if(dsi) dsi.placeholder = _t('discardSearchPlaceholder');
   var memo = document.getElementById('reg-memo');
   if(memo) memo.placeholder = _t('memoPlaceholder');
+  var rc = document.getElementById('reg-company');
+  if(rc) rc.placeholder = _t('makerPlaceholder');
+  var ugTitle = document.getElementById('ug-select-title');
+  if(ugTitle) ugTitle.textContent = _t('ugSelectTitle');
 }
 // ────────────────────────────────────────────────────────
 // ── 존 이름 번역 헬퍼 ─────────────────────────────────
@@ -896,6 +910,9 @@ function _tZone(koName) {
   if(_lang === 'ko') return koName;
   var map = {
     '지하 ZONE':'Underground',
+    '지하 A ZONE':'Underground A', '지하 B ZONE':'Underground B',
+    '지하 C ZONE':'Underground C', '지하 D ZONE':'Underground D',
+    '지하 E ZONE':'Underground E',
     '메인 스튜디오':'Main Studio', '서브 스튜디오':'Sub Studio',
     '실내 품평장':'Indoor Showroom', '실외 품평장':'Outdoor Showroom',
     '외부 외장 A ZONE':'Ext. Exterior A', '외부 외장 B ZONE':'Ext. Exterior B',
@@ -1683,7 +1700,7 @@ function openUndergroundSelect() {
   ['A','B','C','D','E'].forEach(function(z){
     var btn = document.getElementById('ugsel-btn-'+z);
     var cnt = document.getElementById('ugsel-cnt-'+z);
-    if(cnt) cnt.textContent = counts[z] > 0 ? counts[z]+'대' : '비어있음';
+    if(cnt) cnt.textContent = counts[z] > 0 ? counts[z]+_t('ugCount') : _t('ugEmpty');
     if(cnt) cnt.style.background = counts[z] > 0 ? '#007AFF' : 'transparent';
     if(cnt) cnt.style.color = counts[z] > 0 ? '#fff' : '#8E8E93';
   });
@@ -1707,7 +1724,7 @@ function selectUGSubZone(zid) {
   var p = UG_ZONES[zid];
   var grid = document.getElementById('parking-lot-grid');
   var confirmBtn = document.getElementById('parking-confirm-btn');
-  document.getElementById('parking-zone-title').textContent = zone;
+  document.getElementById('parking-zone-title').textContent = _tZone(zone);
   if(confirmBtn){confirmBtn.textContent=_t('locationBtn');confirmBtn.disabled=false;confirmBtn.classList.remove('btn-loading');confirmBtn.style.pointerEvents='auto';}
 
   // 항상 4열 기준 셀 크기 — 열 수 적은 존은 전체 폭의 (cols/4) 비율로 그리드 폭 조정 → 카드 크기 동일
@@ -1934,7 +1951,7 @@ function setFilter(btn,type) {
         cb.innerHTML='<div style="display:flex;gap:8px;flex-wrap:wrap;">'
           +'<div class="filter-chip" style="cursor:default;">EXT <span style="color:#007AFF;">'+extCnt+'</span></div>'
           +'<div class="filter-chip" style="cursor:default;">INT <span style="color:#007AFF;">'+intCnt+'</span></div>'
-          +'<div class="filter-chip" style="cursor:default;">총합 <span style="color:#007AFF;">'+(extCnt+intCnt)+'</span></div>'
+          +'<div class="filter-chip" style="cursor:default;">'+_t('totalCount')+' <span style="color:#007AFF;">'+(extCnt+intCnt)+'</span></div>'
           +'</div>';
       }
     } else if(type==='ext'){
@@ -1971,7 +1988,7 @@ function enterSearch(){
       cb.innerHTML='<div style="display:flex;gap:8px;flex-wrap:wrap;">'
         +'<div class="filter-chip" style="cursor:default;">EXT <span style="color:#007AFF;">'+extCnt+'</span></div>'
         +'<div class="filter-chip" style="cursor:default;">INT <span style="color:#007AFF;">'+intCnt+'</span></div>'
-        +'<div class="filter-chip" style="cursor:default;">총합 <span style="color:#007AFF;">'+(extCnt+intCnt)+'</span></div>'
+        +'<div class="filter-chip" style="cursor:default;">'+_t('totalCount')+' <span style="color:#007AFF;">'+(extCnt+intCnt)+'</span></div>'
         +'</div>';
     }
     // 백그라운드에서 최신 데이터 갱신
@@ -2001,7 +2018,7 @@ function doSearch(silent) {
   if(_expBar)_expBar.style.display=(isAdmin&&activeType==='zone')?'block':'none';
   if(cb&&activeType!=='zone'){
     cb.style.display='block';
-    if(activeType==='all'){cb.innerHTML='<div style="display:flex;gap:8px;flex-wrap:wrap;"><div class="filter-chip" style="cursor:default;">EXT <span style="color:#007AFF;">'+extCnt+'</span></div><div class="filter-chip" style="cursor:default;">INT <span style="color:#007AFF;">'+intCnt+'</span></div><div class="filter-chip" style="cursor:default;">총합 <span style="color:#007AFF;">'+(extCnt+intCnt)+'</span></div></div>';}
+    if(activeType==='all'){cb.innerHTML='<div style="display:flex;gap:8px;flex-wrap:wrap;"><div class="filter-chip" style="cursor:default;">EXT <span style="color:#007AFF;">'+extCnt+'</span></div><div class="filter-chip" style="cursor:default;">INT <span style="color:#007AFF;">'+intCnt+'</span></div><div class="filter-chip" style="cursor:default;">'+_t('totalCount')+' <span style="color:#007AFF;">'+(extCnt+intCnt)+'</span></div></div>';}
     else if(activeType==='ext'){cb.innerHTML='<div style="display:flex;gap:8px;"><div class="filter-chip" style="cursor:default;">EXT <span style="color:#007AFF;">'+extCnt+'</span></div></div>';}
     else if(activeType==='int'){cb.innerHTML='<div style="display:flex;gap:8px;"><div class="filter-chip" style="cursor:default;">INT <span style="color:#007AFF;">'+intCnt+'</span></div></div>';}
   }
@@ -2659,7 +2676,7 @@ function openParkingOverlay(zone) {
   if (!spots) return false;
   _parkingZone = zone;
   _parkingSpot = '';
-  document.getElementById('parking-zone-title').textContent = zone;
+  document.getElementById('parking-zone-title').textContent = _tZone(zone);
   var confirmBtn=document.getElementById('parking-confirm-btn');
   if(confirmBtn){confirmBtn.textContent=_t('locationBtn');confirmBtn.disabled=false;confirmBtn.removeAttribute('disabled');confirmBtn.classList.remove('btn-loading');confirmBtn.style.pointerEvents='auto';}
   var grid = document.getElementById('parking-lot-grid');
@@ -2761,7 +2778,7 @@ document.getElementById('reg-date').valueAsDate=new Date();
 <div id="ug-select-overlay" style="display:none;position:fixed;inset:0;background:rgba(0,0,0,0.5);align-items:flex-end;z-index:9999;" onclick="closeUGSelectOverlay(event)">
   <div style="background:#fff;border-radius:20px 20px 0 0;width:100%;padding:20px 16px 40px;max-height:92vh;overflow-y:auto;">
     <div style="width:40px;height:4px;background:#E5E5EA;border-radius:2px;margin:0 auto 14px;"></div>
-    <div style="font-size:16px;font-weight:700;margin-bottom:12px;">지하 주차장 — ZONE 선택</div>
+    <div style="font-size:16px;font-weight:700;margin-bottom:12px;" id="ug-select-title" data-i18n="ugSelectTitle">지하 주차장 — ZONE 선택</div>
     <!-- 평면도 이미지 -->
     <div style="width:100%;border-radius:12px;overflow:hidden;margin-bottom:14px;">
       <img src="https://1232ygf-hash.github.io/kia-model-manager-v2/underground-map.jpg?v=2" style="width:100%;display:block;" alt="지하창고 평면도" onerror="this.style.display='none'">
@@ -2770,23 +2787,23 @@ document.getElementById('reg-date').valueAsDate=new Date();
     <div style="display:grid;grid-template-columns:repeat(5,1fr);gap:8px;">
       <button id="ugsel-btn-A" onclick="selectUGSubZone('A')" style="background:#1C1C1E;border:none;border-radius:12px;padding:12px 4px;cursor:pointer;display:flex;flex-direction:column;align-items:center;gap:4px;">
         <span style="font-size:22px;font-weight:700;color:#fff;font-family:'Bebas Neue',sans-serif;letter-spacing:1px;">A</span>
-        <span id="ugsel-cnt-A" style="font-size:10px;color:#8E8E93;padding:2px 6px;border-radius:6px;">비어있음</span>
+        <span id="ugsel-cnt-A" data-i18n="ugEmpty" style="font-size:10px;color:#8E8E93;padding:2px 6px;border-radius:6px;">비어있음</span>
       </button>
       <button id="ugsel-btn-B" onclick="selectUGSubZone('B')" style="background:#1C1C1E;border:none;border-radius:12px;padding:12px 4px;cursor:pointer;display:flex;flex-direction:column;align-items:center;gap:4px;">
         <span style="font-size:22px;font-weight:700;color:#fff;font-family:'Bebas Neue',sans-serif;letter-spacing:1px;">B</span>
-        <span id="ugsel-cnt-B" style="font-size:10px;color:#8E8E93;padding:2px 6px;border-radius:6px;">비어있음</span>
+        <span id="ugsel-cnt-B" data-i18n="ugEmpty" style="font-size:10px;color:#8E8E93;padding:2px 6px;border-radius:6px;">비어있음</span>
       </button>
       <button id="ugsel-btn-C" onclick="selectUGSubZone('C')" style="background:#1C1C1E;border:none;border-radius:12px;padding:12px 4px;cursor:pointer;display:flex;flex-direction:column;align-items:center;gap:4px;">
         <span style="font-size:22px;font-weight:700;color:#fff;font-family:'Bebas Neue',sans-serif;letter-spacing:1px;">C</span>
-        <span id="ugsel-cnt-C" style="font-size:10px;color:#8E8E93;padding:2px 6px;border-radius:6px;">비어있음</span>
+        <span id="ugsel-cnt-C" data-i18n="ugEmpty" style="font-size:10px;color:#8E8E93;padding:2px 6px;border-radius:6px;">비어있음</span>
       </button>
       <button id="ugsel-btn-D" onclick="selectUGSubZone('D')" style="background:#1C1C1E;border:none;border-radius:12px;padding:12px 4px;cursor:pointer;display:flex;flex-direction:column;align-items:center;gap:4px;">
         <span style="font-size:22px;font-weight:700;color:#fff;font-family:'Bebas Neue',sans-serif;letter-spacing:1px;">D</span>
-        <span id="ugsel-cnt-D" style="font-size:10px;color:#8E8E93;padding:2px 6px;border-radius:6px;">비어있음</span>
+        <span id="ugsel-cnt-D" data-i18n="ugEmpty" style="font-size:10px;color:#8E8E93;padding:2px 6px;border-radius:6px;">비어있음</span>
       </button>
       <button id="ugsel-btn-E" onclick="selectUGSubZone('E')" style="background:#1C1C1E;border:none;border-radius:12px;padding:12px 4px;cursor:pointer;display:flex;flex-direction:column;align-items:center;gap:4px;">
         <span style="font-size:22px;font-weight:700;color:#fff;font-family:'Bebas Neue',sans-serif;letter-spacing:1px;">E</span>
-        <span id="ugsel-cnt-E" style="font-size:10px;color:#8E8E93;padding:2px 6px;border-radius:6px;">비어있음</span>
+        <span id="ugsel-cnt-E" data-i18n="ugEmpty" style="font-size:10px;color:#8E8E93;padding:2px 6px;border-radius:6px;">비어있음</span>
       </button>
     </div>
   </div>
@@ -2797,7 +2814,7 @@ document.getElementById('reg-date').valueAsDate=new Date();
   <div class="parking-sheet">
     <div class="parking-handle"></div>
     <div style="font-size:16px;font-weight:700;margin-bottom:4px;" id="parking-zone-title"></div>
-    <div style="font-size:12px;color:#8E8E93;margin-bottom:12px;">모델이 위치한 구역을 선택해주세요</div>
+    <div style="font-size:12px;color:#8E8E93;margin-bottom:12px;" id="parking-zone-sub" data-i18n="ugSelectSub">모델이 위치한 구역을 선택해주세요</div>
     <div class="parking-lot" id="parking-lot-grid"></div>
     <button class="parking-confirm" id="parking-confirm-btn" onclick="confirmParkingSpot()" data-i18n="locationBtn">디자인 모델 위치 등록</button>
   </div>
