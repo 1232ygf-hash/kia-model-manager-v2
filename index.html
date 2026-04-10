@@ -560,13 +560,13 @@ input[type="date"].form-input-inline{color-scheme:light;text-align:right;}
   </div>
 
 <!-- 구역 상세 화면 -->
-<div id="screen-zone-detail" class="screen">
+<div id="screen-zone-detail" class="screen" style="height:100vh;min-height:unset;overflow:hidden;">
   <div class="top-bar">
     <button class="back-btn" onclick="goTo('screen-search')">‹ 뒤로</button>
     <div class="top-bar-title" id="zone-detail-title">구역 상세</div>
     <div class="right-slot"></div>
   </div>
-  <div class="content" id="zone-detail-content" style="overflow:hidden;padding-bottom:0;">
+  <div class="content" id="zone-detail-content" style="overflow:hidden;padding-bottom:0;flex:1;min-height:0;">
     <div id="zone-detail-list" style="height:100%;"></div>
   </div>
 </div>
@@ -1482,7 +1482,8 @@ function selectUGSubZone(zid) {
     var btn = document.createElement('button');
     btn.className = 'car-spot-btn';
     btn.setAttribute('data-spot', spot);
-    btn.innerHTML = carSpotSVG(spot, !!occupiedModel, occupiedModel ? occupiedModel.project : null);
+    // 라벨은 숫자만 표시 (A-1 → 1)
+    btn.innerHTML = carSpotSVG(String(i), !!occupiedModel, occupiedModel ? occupiedModel.project : null);
     grid.appendChild(btn);
   }
 
@@ -1545,10 +1546,14 @@ function showParkingGrid(zone, models) {
   var list = document.getElementById('zone-detail-list');
   var content = document.getElementById('zone-detail-content');
   if(content){ content.style.overflow='hidden'; content.style.paddingBottom='0'; }
+  // screen 자체도 min-height 고정
+  var screenEl = document.getElementById('screen-zone-detail');
+  if(screenEl){ screenEl.style.height='100vh'; screenEl.style.minHeight='unset'; screenEl.style.overflow='hidden'; }
   if(!list) return;
 
   var spotCount = p.spots;
   var cols = p.cols;
+  var rows = Math.ceil(spotCount / cols);
 
   // 스팟별 모델 매핑
   var spotMap = {};
@@ -1559,11 +1564,22 @@ function showParkingGrid(zone, models) {
     }
   });
 
-  var rows = Math.ceil(spotCount / cols);
-  var html = '<div style="padding:10px 12px;display:flex;flex-direction:column;height:calc(100vh - 120px);">';
-  // 뒤로가기
+  // A존(4열×4행) 기준 aspect-ratio 고정: 4열일때 비율 그대로
+  // B,D(3열): 가운데 정렬, C(4열): A와 동일, E(3열×2행): 가운데
+  var gridStyle = 'display:grid;grid-template-columns:repeat('+cols+',1fr);grid-template-rows:repeat('+rows+',1fr);gap:6px;flex:1;';
+  // 칸수 적은 존(B,D,E)은 그리드 폭 제한해서 센터
+  var maxCols = 4; // A존 기준
+  var wrapStyle = cols < maxCols
+    ? 'flex:1;display:flex;align-items:center;justify-content:center;'
+    : 'flex:1;display:flex;';
+  var innerGridStyle = cols < maxCols
+    ? 'background:#F2F2F7;border:2px solid #E5E5EA;border-radius:20px;padding:10px;width:'+(cols/maxCols*100)+'%;aspect-ratio:'+(cols)+'/'+rows+';display:grid;grid-template-columns:repeat('+cols+',1fr);grid-template-rows:repeat('+rows+',1fr);gap:6px;'
+    : 'background:#F2F2F7;border:2px solid #E5E5EA;border-radius:20px;padding:10px;width:100%;display:grid;grid-template-columns:repeat('+cols+',1fr);grid-template-rows:repeat('+rows+',1fr);gap:6px;';
+
+  var html = '<div style="padding:10px 12px;display:flex;flex-direction:column;height:100%;box-sizing:border-box;">';
   html += '<button onclick="showUndergroundZoneList(MODELS)" style="font-size:12px;color:#8E8E93;background:none;border:0.5px solid #C7C7CC;border-radius:20px;padding:4px 12px;cursor:pointer;font-family:\'Pretendard\',sans-serif;margin-bottom:10px;align-self:flex-start;">← 전체 보기</button>';
-  html += '<div style="background:#F2F2F7;border:2px solid #E5E5EA;border-radius:20px;padding:10px;flex:1;display:grid;grid-template-columns:repeat('+cols+',1fr);grid-template-rows:repeat('+rows+',1fr);gap:6px;">';
+  html += '<div style="'+wrapStyle+'">';
+  html += '<div style="'+innerGridStyle+'">';
 
   for(var i=1;i<=spotCount;i++){
     var spot = zid+'-'+i;
@@ -1575,7 +1591,7 @@ function showParkingGrid(zone, models) {
     html += '<div style="width:100%;height:100%;background:'+(occupied?'#3A3A3C':'#F8F8F8')+';border:1.5px solid '+(occupied?'#555':'#D1D1D6')+';border-radius:10px;display:flex;flex-direction:column;align-items:center;justify-content:center;padding:4px;gap:2px;">';
     if(occupied){
       html += '<span style="font-size:'+(cols===4?'9':'11')+'px;font-weight:800;color:#fff;text-align:center;word-break:break-all;line-height:1.2;">'+m.project+'</span>';
-      html += '<span style="font-size:8px;font-weight:400;color:rgba(255,255,255,0.55);text-align:center;">'+spot+'</span>';
+      html += '<span style="font-size:8px;font-weight:400;color:rgba(255,255,255,0.55);text-align:center;">'+i+'</span>';
     } else {
       html += '<span style="font-size:'+(cols===4?'13':'16')+'px;font-weight:700;color:#1C1C1E;">'+i+'</span>';
     }
@@ -1584,7 +1600,7 @@ function showParkingGrid(zone, models) {
     html += '<div style="position:absolute;right:-5px;bottom:28%;width:5px;height:8px;background:'+(occupied?'#48484A':'#E5E5EA')+';border:1.5px solid '+(occupied?'#666':'#C7C7CC')+';border-radius:0 3px 3px 0;"></div>';
     html += '</div></div>';
   }
-  html += '</div></div>';
+  html += '</div></div></div>';
 
   // 모델 상세 팝업 (hidden)
   html += '<div id="azone-detail-overlay" style="display:none;position:fixed;inset:0;background:rgba(0,0,0,0.5);z-index:9999;align-items:flex-end;" onclick="closeAZoneDetail(event)">';
