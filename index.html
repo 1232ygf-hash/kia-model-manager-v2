@@ -2292,21 +2292,21 @@ function _renderUGFloorView() {
 
   var html = '<div class="ug-handle"></div>'
     + '<div style="font-size:16px;font-weight:700;margin-bottom:12px;">지하 주차장</div>'
-    // 이미지
     + '<div style="position:relative;width:100%;border-radius:12px;overflow:hidden;">'
-    + '<img src="https://1232ygf-hash.github.io/kia-model-manager-v2/underground-map.jpg" style="width:100%;display:block;" alt="지하창고 평면도">'
-    + '</div>'
-    // ABCDE 버튼 한 줄
-    + '<div style="display:grid;grid-template-columns:repeat(5,1fr);gap:8px;margin-top:10px;">';
+    + '<img src="https://1232ygf-hash.github.io/kia-model-manager-v2/underground-map.jpg" style="width:100%;display:block;" alt="지하창고 평면도">';
 
+  // 이미지 위에 오버레이 — 도면 존 라벨 위치 기준 X좌표
+  var zonePos = {A:'33%', B:'48%', C:'59%', D:'74%', E:'87%'};
   ['A','B','C','D','E'].forEach(function(id){
     var cnt = counts[id];
     html += '<button onclick="openUGZone(\''+id+'\')" '
-      + 'style="background:#1C1C1E;border:none;border-radius:12px;padding:12px 4px;cursor:pointer;display:flex;flex-direction:column;align-items:center;gap:4px;">'
-      + '<span style="font-size:20px;font-weight:700;color:#fff;font-family:\'Bebas Neue\',sans-serif;letter-spacing:1px;">'+id+'</span>'
+      + 'style="position:absolute;bottom:10%;left:'+zonePos[id]+';transform:translateX(-50%);'
+      + 'background:rgba(28,28,30,0.88);border:none;border-radius:12px;padding:8px 10px;cursor:pointer;'
+      + 'display:flex;flex-direction:column;align-items:center;gap:3px;min-width:36px;backdrop-filter:blur(4px);">'
+      + '<span style="font-size:18px;font-weight:700;color:#fff;font-family:\'Bebas Neue\',sans-serif;letter-spacing:1px;line-height:1;">'+id+'</span>'
       + (cnt>0
-        ? '<span style="font-size:10px;color:#fff;background:#007AFF;padding:2px 6px;border-radius:6px;font-weight:600;">'+cnt+'대</span>'
-        : '<span style="font-size:10px;color:#8E8E93;">비어있음</span>')
+        ? '<span style="font-size:9px;color:#fff;background:#007AFF;padding:1px 5px;border-radius:5px;font-weight:600;">'+cnt+'</span>'
+        : '')
       + '</button>';
   });
 
@@ -2356,43 +2356,6 @@ function openUGZone(zid) {
     + '<button id="ug-confirm-btn" onclick="confirmUGSpot()" style="width:100%;background:#000;color:#fff;border:none;border-radius:14px;padding:14px;font-size:15px;font-weight:700;cursor:pointer;font-family:\'Pretendard\',sans-serif;">디자인 모델 위치 등록</button>'
     + '</div>';
 
-  sheet.innerHTML = html;
-}
-
-function _renderUGFloorView() {
-  var sheet = document.getElementById('ug-sheet');
-  // 상태 초기화
-  _ugZone = ''; _ugSpot = '';
-  var html = '<div class="ug-handle"></div>'
-    + '<div style="font-size:16px;font-weight:700;margin-bottom:12px;">지하 주차장</div>'
-    + '<div id="ug-map-wrap" style="position:relative;width:100%;border-radius:12px;overflow:hidden;touch-action:none;">'
-    + '<div id="ug-map-inner" style="position:relative;width:100%;transition:transform 0.4s cubic-bezier(0.4,0,0.2,1);transform-origin:0 0;">'
-    + '<img src="https://1232ygf-hash.github.io/kia-model-manager-v2/underground-map.jpg" id="ug-map-img" style="width:100%;display:block;" alt="지하창고 평면도">'
-    + '<div id="ug-spot-layer" style="position:absolute;top:0;left:0;width:100%;height:100%;pointer-events:none;"></div>'
-    + '</div>'
-    + '<div id="ug-zone-layer" style="position:absolute;top:0;left:0;width:100%;height:100%;">';
-
-  ['A','B','C','D','E'].forEach(function(id) {
-    var p = UG_ZONE_POS[id];
-    var zm = (typeof MODELS !== 'undefined' && MODELS)
-      ? MODELS.filter(function(m){return m.status!=='폐기'&&m.location&&m.location.indexOf('지하 '+id+'-')===0;})
-      : [];
-    var cnt = zm.length;
-    html += '<div id="ugz-'+id+'" onclick="zoomToZone(\''+id+'\')" '
-      + 'style="position:absolute;left:'+p.left+'%;top:'+p.top+'%;width:'+p.width+'%;height:'+p.height+'%;'
-      + 'cursor:pointer;display:flex;flex-direction:column;align-items:center;justify-content:center;gap:3px;'
-      + 'border-radius:6px;border:2px solid transparent;transition:all 0.15s;" '
-      + 'onmouseover="this.style.background=\'rgba(0,122,255,0.15)\';this.style.borderColor=\'rgba(0,122,255,0.7)\'" '
-      + 'onmouseout="this.style.background=\'transparent\';this.style.borderColor=\'transparent\'">'
-      + '<div style="background:rgba(0,0,0,0.7);color:#fff;font-size:13px;font-weight:700;padding:4px 10px;border-radius:8px;pointer-events:none;letter-spacing:0.5px;">'+id+'</div>'
-      + (cnt>0?'<div style="background:#007AFF;color:#fff;font-size:9px;font-weight:600;padding:2px 6px;border-radius:6px;pointer-events:none;">'+cnt+'대</div>':'')
-      + '</div>';
-  });
-  html += '</div></div>'
-    + '<div id="ug-confirm-bar" style="display:none;margin-top:12px;">'
-    + '<div id="ug-sel-info" style="font-size:12px;color:#8E8E93;text-align:center;margin-bottom:8px;"></div>'
-    + '<button id="ug-confirm-btn" onclick="confirmUGSpot()" style="width:100%;background:#000;color:#fff;border:none;border-radius:14px;padding:14px;font-size:15px;font-weight:700;cursor:pointer;font-family:\'Pretendard\',sans-serif;">디자인 모델 위치 등록</button>'
-    + '</div>';
   sheet.innerHTML = html;
 }
 
