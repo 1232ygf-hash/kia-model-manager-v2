@@ -742,6 +742,14 @@ var _I18N = {
     // 구역명
     underground:'지하 ZONE', exportLoc:'외부 반출',
     exportPlaceholder:'반출 목적지 입력 (예: 본사 품평)',
+    // 구역 그룹/존 이름
+    grpUnderground:'지하', grpStudio:'스튜디오', grpShowroom:'품평장',
+    grpExtExt:'외부 외장', grpExtInt:'외부 내장', grpExport:'외부 반출',
+    zoneMainStudio:'메인 스튜디오', zoneSubStudio:'서브 스튜디오',
+    zoneIndoorShow:'실내 품평장', zoneOutdoorShow:'실외 품평장',
+    // 상태
+    noModels:'이 구역에 모델이 없습니다', noLocation:'위치 미등록', emptyZone:'빈 구역',
+    mfrShort:'제작사', reviewShort:'품평일',
   },
   en: {
     backHome:'‹ Home', backBtn:'‹ Back', waiting:'Waiting', scanQR:'Scan QR code',
@@ -796,6 +804,12 @@ var _I18N = {
     discardedCode:'Discarded', discardedModel:'Discarded',
     underground:'Underground', exportLoc:'Export',
     exportPlaceholder:'Enter destination (e.g. HQ Review)',
+    grpUnderground:'Underground', grpStudio:'Studio', grpShowroom:'Showroom',
+    grpExtExt:'Ext. Exterior', grpExtInt:'Ext. Interior', grpExport:'Export',
+    zoneMainStudio:'Main Studio', zoneSubStudio:'Sub Studio',
+    zoneIndoorShow:'Indoor Showroom', zoneOutdoorShow:'Outdoor Showroom',
+    noModels:'No models in this zone', noLocation:'Location not set', emptyZone:'Empty',
+    mfrShort:'Maker', reviewShort:'Review',
   }
 };
 
@@ -823,6 +837,10 @@ function applyLang() {
     var val = _t(key);
     if(val) el.placeholder = val;
   });
+  // 위치 버튼 그리드 재빌드 (존 이름 번역 반영)
+  if(typeof buildLocationGrid === 'function') {
+    try { buildLocationGrid(); } catch(e) {}
+  }
   // 동적으로 생성된 텍스트 업데이트
   _updateDynamicTexts();
 }
@@ -872,6 +890,34 @@ function _updateDynamicTexts() {
   if(memo) memo.placeholder = _t('memoPlaceholder');
 }
 // ────────────────────────────────────────────────────────
+// ── 존 이름 번역 헬퍼 ─────────────────────────────────
+// 한국어 존 이름 → 번역된 이름
+function _tZone(koName) {
+  if(_lang === 'ko') return koName;
+  var map = {
+    '지하 ZONE':'Underground',
+    '메인 스튜디오':'Main Studio', '서브 스튜디오':'Sub Studio',
+    '실내 품평장':'Indoor Showroom', '실외 품평장':'Outdoor Showroom',
+    '외부 외장 A ZONE':'Ext. Exterior A', '외부 외장 B ZONE':'Ext. Exterior B',
+    '외부 외장 C ZONE':'Ext. Exterior C', '외부 외장 D ZONE':'Ext. Exterior D',
+    '외부 외장 E ZONE':'Ext. Exterior E',
+    '외부 내장 A ZONE':'Ext. Interior A', '외부 내장 B ZONE':'Ext. Interior B',
+    '외부 내장 C ZONE':'Ext. Interior C', '외부 내장 D ZONE':'Ext. Interior D',
+    '외부 반출':'Export',
+  };
+  return map[koName] || koName;
+}
+// 그룹명 번역
+function _tGroup(koGroup) {
+  if(_lang === 'ko') return koGroup;
+  var map = {
+    '지하':'Underground','스튜디오':'Studio','품평장':'Showroom',
+    '외부 외장':'Ext. Exterior','외부 내장':'Ext. Interior','외부 반출':'Export'
+  };
+  return map[koGroup] || koGroup;
+}
+// ────────────────────────────────────────────────────────
+
 var LOCATIONS = [
   {group:'지하',zones:['지하 ZONE']},
   {group:'스튜디오',zones:['메인 스튜디오','서브 스튜디오']},
@@ -1232,7 +1278,7 @@ function onQRSuccess(mode, text) {
         _e=document.getElementById('loc-m-type-tag'); if(_e){_e.textContent=m.type||'-';_e.className='type-tag '+(m.type||'').toLowerCase();}
         _e=document.getElementById('loc-m-stage-tag'); if(_e)_e.textContent=m.stage||'-';
         _e=document.getElementById('loc-m-material-tag'); if(_e)_e.textContent=m.material||'-';
-        _e=document.getElementById('loc-m-loc'); if(_e)_e.textContent='📍 '+(m.location||'위치 미등록');
+        _e=document.getElementById('loc-m-loc'); if(_e)_e.textContent='📍 '+(m.location||_t('noLocation'));
         _e=document.getElementById('loc-m-company'); if(_e)_e.textContent=m.company||'-';
         _e=document.getElementById('loc-m-indate'); if(_e)_e.textContent=formatDate(m.inDate);
         if(infoDiv)infoDiv.style.display='block';
@@ -1476,9 +1522,8 @@ function buildLocationGrid() {
   ALL_ZONES.forEach(function(zone){
     var btn=document.createElement('button');
     btn.className='loc-btn';
-    // 지하 ZONE은 특별 아이콘 표시
-    btn.textContent = zone === '지하 ZONE' ? _t('underground') : zone;
-    if(zone === '지하 ZONE') btn.style.cssText='grid-column:1/-1;width:100%;';
+    btn.textContent = zone === '지하 ZONE' ? _t('underground') : _tZone(zone);
+    if(zone === '지하 ZONE') btn.style.cssText='grid-column:1/-1;width:100%';
     btn.onclick=function(){
       // 지하 ZONE → 이미지 팝업
       if(zone === '지하 ZONE'){ openUndergroundSelect(); return; }
@@ -1500,7 +1545,7 @@ function buildLocationGrid() {
   // 외부 반출 버튼 + 입력창을 grid 맨 아래에 추가
   var expBtn=document.createElement('button');
   expBtn.id='loc-btn-export'; expBtn.className='loc-btn';
-  expBtn.textContent='외부 반출';
+  expBtn.textContent=_t('exportLoc');
   expBtn.style.cssText='grid-column:1/-1;width:100%;background:var(--fill);border:1.5px solid transparent;border-radius:12px;padding:12px 8px;text-align:center;cursor:pointer;color:var(--sub);font-family:\'Pretendard\',sans-serif;font-size:13px;font-weight:500;';
   expBtn.onclick=function(){ selectExportLocation(this); };
   grid.appendChild(expBtn);
@@ -1509,7 +1554,7 @@ function buildLocationGrid() {
   expWrap.id='export-input-wrap'; expWrap.style.cssText='display:none;grid-column:1/-1;';
   var expInput=document.createElement('input');
   expInput.id='export-location-text'; expInput.type='text';
-  expInput.placeholder='반출 목적지 입력 (예: 본사 품평)';
+  expInput.placeholder=_t('exportPlaceholder');
   expInput.style.cssText='width:100%;background:var(--fill);border:1.5px solid var(--text);border-radius:12px;padding:12px 14px;font-family:\'Pretendard\',sans-serif;font-size:14px;color:var(--text);outline:none;';
   expInput.oninput=function(){ updateExportLocation(this.value); };
   expWrap.appendChild(expInput);
@@ -1543,9 +1588,8 @@ function buildZoneView(models) {
   if(!container)return;
   container.innerHTML='';
   LOCATIONS.forEach(function(group){
-    var gt=document.createElement('div');gt.className='zone-group-title';gt.textContent=group.group;container.appendChild(gt);
+    var gt=document.createElement('div');gt.className='zone-group-title';gt.textContent=_tGroup(group.group);container.appendChild(gt);
     group.zones.forEach(function(zone){
-      // 지하 ZONE은 A~E 전체 집계
       var zm;
       if(zone === '지하 ZONE'){
         zm = models.filter(function(m){return m.location&&m.location.indexOf('지하 ')==0&&m.status==='보관중';});
@@ -1556,7 +1600,7 @@ function buildZoneView(models) {
       sec.style.cursor='pointer';
       var hdr=document.createElement('div');hdr.className='zone-header';
       hdr.style.borderRadius='12px';
-      hdr.innerHTML='<div class="zone-name">'+zone+'</div><div style="display:flex;align-items:center;gap:8px;"><div class="zone-count '+(zm.length===0?'zero':'')+'">'+zm.length+'</div><div style="color:#C7C7CC;font-size:16px;">›</div></div>';
+      hdr.innerHTML='<div class="zone-name">'+_tZone(zone)+'</div><div style="display:flex;align-items:center;gap:8px;"><div class="zone-count '+(zm.length===0?'zero':'')+'">'+zm.length+'</div><div style="color:#C7C7CC;font-size:16px;">›</div></div>';
       sec.appendChild(hdr);
       (function(z, zms){
         sec.onclick = function(){ showZoneDetail(z, zms); };
@@ -1569,11 +1613,10 @@ function buildZoneView(models) {
   var exportModels = models.filter(function(m){
     return m.location && m.location.indexOf('외부 반출') === 0 && m.status !== '폐기';
   });
-  var expGt = document.createElement('div'); expGt.className='zone-group-title'; expGt.textContent='외부 반출'; container.appendChild(expGt);
-
+  var expGt = document.createElement('div'); expGt.className='zone-group-title'; expGt.textContent=_t('grpExport'); container.appendChild(expGt);
   var expSec = document.createElement('div'); expSec.className='zone-section'; expSec.style.cursor='pointer';
   var expHdr = document.createElement('div'); expHdr.className='zone-header'; expHdr.style.borderRadius='12px';
-  expHdr.innerHTML='<div class="zone-name">외부 반출</div><div style="display:flex;align-items:center;gap:8px;"><div class="zone-count '+(exportModels.length===0?'zero':'')+'">'+exportModels.length+'</div><div style="color:#C7C7CC;font-size:16px;">›</div></div>';
+  expHdr.innerHTML='<div class="zone-name">'+_t('exportLoc')+'</div><div style="display:flex;align-items:center;gap:8px;"><div class="zone-count '+(exportModels.length===0?'zero':'')+'">'+exportModels.length+'</div><div style="color:#C7C7CC;font-size:16px;">›</div></div>';
   expSec.appendChild(expHdr);
   expSec.onclick = function(){ showZoneDetail('외부 반출', exportModels); };
   container.appendChild(expSec);
@@ -1591,13 +1634,13 @@ function showZoneDetail(zone, models) {
     return;
   }
   var title = document.getElementById('zone-detail-title');
-  if(title) title.textContent = (zone && zone.indexOf('외부 반출') === 0) ? '외부 반출' : zone;
+  if(title) title.textContent = (zone && zone.indexOf('외부 반출') === 0) ? _t('exportLoc') : _tZone(zone);
   var list = document.getElementById('zone-detail-list');
   var content = document.getElementById('zone-detail-content');
   if(content){ content.style.overflow='auto'; content.style.paddingBottom='48px'; }
   if(!list) return;
   if(models.length === 0){
-    list.innerHTML = '<div style="text-align:center;padding:48px 20px;color:#C7C7CC;font-size:14px;"><div style="font-size:40px;margin-bottom:12px;">📭</div>이 구역에 모델이 없습니다</div>';
+    list.innerHTML = '<div style="text-align:center;padding:48px 20px;color:#C7C7CC;font-size:14px;"><div style="font-size:40px;margin-bottom:12px;">📭</div>'+_t('noModels')+'</div>';
   } else {
     var h='';
     models.forEach(function(m){
@@ -1607,7 +1650,7 @@ function showZoneDetail(zone, models) {
       h+='<div class="card-top"><div class="model-name">'+m.project+'</div>';
       h+='<div style="display:flex;align-items:center;flex-wrap:wrap;gap:4px;"><span class="type-tag '+m.type.toLowerCase()+'">'+m.type+'</span>'+stg+mat+'</div></div>';
       h+='<div class="location-row">📍 '+(m.location||zone)+'</div>';
-      h+='<div class="meta-row"><div class="meta-item">제작사 <span>'+m.company+'</span></div><div class="meta-item">품평 <span>'+formatDate(m.inDate)+'</span></div></div>';
+      h+='<div class="meta-row"><div class="meta-item">'+_t('mfrShort')+' <span>'+m.company+'</span></div><div class="meta-item">'+_t('reviewShort')+' <span>'+formatDate(m.inDate)+'</span></div></div>';
       h+='</div>';
     });
     list.innerHTML = h;
@@ -1737,7 +1780,7 @@ function showUndergroundZoneList(models) {
     });
     html += '<div style="margin-bottom:8px;cursor:pointer;" onclick="showParkingGrid(\''+zone+'\',MODELS)">';
     html += '<div style="display:flex;align-items:center;justify-content:space-between;background:var(--card);border-radius:12px;padding:12px 16px;box-shadow:var(--shadow-sm);">';
-    html += '<div style="font-size:14px;font-weight:600;">'+zone+'</div>';
+    html += '<div style="font-size:14px;font-weight:600;">'+_tZone(zone)+'</div>';
     html += '<div style="display:flex;align-items:center;gap:8px;"><div style="font-size:24px;font-weight:900;font-family:\'Bebas Neue\',sans-serif;color:'+(zm.length===0?'#C7C7CC':'var(--text)')+';">'+zm.length+'</div><div style="color:#C7C7CC;font-size:16px;">›</div></div>';
     html += '</div></div>';
   });
@@ -1969,7 +2012,7 @@ function renderList(models) {
   var c=document.getElementById('model-list-view');
   if(!c)return;
   if(!models||models.length===0){c.innerHTML='<div style="text-align:center;padding:48px 20px;color:#C7C7CC;font-size:14px;"><div style="font-size:40px;margin-bottom:12px;">📭</div>등록된 모델이 없습니다</div>';return;}
-  var _h='';for(var _i=0;_i<models.length;_i++){var _m=models[_i];if(_m.status==='폐기')continue;var _loc=_m.location||'위치 미등록';var _stg=_m.stage?'<span class="type-tag" style="background:#E8F0FE;color:#1a73e8;margin-left:4px;">'+_m.stage+'</span>':'';var _mat=_m.material?'<span class="type-tag" style="background:#F2F2F7;color:#555;margin-left:4px;">'+_m.material+'</span>':'';_h+='<div class="model-card"><div class="card-top"><div class="model-name">'+_m.project+'</div><div style="display:flex;align-items:center;flex-wrap:wrap;gap:4px;"><span class="type-tag '+_m.type.toLowerCase()+'">'+_m.type+'</span>'+_stg+_mat+'</div></div><div class="location-row">📍 '+_loc+'</div><div class="meta-row"><div class="meta-item">제작사 <span>'+_m.company+'</span></div><div class="meta-item">품평일 <span>'+formatDate(_m.inDate)+'</span></div></div></div>';}c.innerHTML=_h;
+  var _h='';for(var _i=0;_i<models.length;_i++){var _m=models[_i];if(_m.status==='폐기')continue;var _loc=_m.location||_t('noLocation');var _stg=_m.stage?'<span class="type-tag" style="background:#E8F0FE;color:#1a73e8;margin-left:4px;">'+_m.stage+'</span>':'';var _mat=_m.material?'<span class="type-tag" style="background:#F2F2F7;color:#555;margin-left:4px;">'+_m.material+'</span>':'';_h+='<div class="model-card"><div class="card-top"><div class="model-name">'+_m.project+'</div><div style="display:flex;align-items:center;flex-wrap:wrap;gap:4px;"><span class="type-tag '+_m.type.toLowerCase()+'">'+_m.type+'</span>'+_stg+_mat+'</div></div><div class="location-row">📍 '+_loc+'</div><div class="meta-row"><div class="meta-item">'+_t('mfrShort')+' <span>'+_m.company+'</span></div><div class="meta-item">'+_t('reviewShort')+' <span>'+formatDate(_m.inDate)+'</span></div></div></div>';}c.innerHTML=_h;
 }
 
 
@@ -2243,8 +2286,8 @@ function renderDiscardResults(models, container) {
       '<div style="display:flex;align-items:center;flex-wrap:wrap;gap:4px;"><span class="type-tag '+(m.type||'').toLowerCase()+'">'+(m.type||'')+'</span>'+stg+mat+'</div>' +
       '</div>' +
       '<div style="font-size:12px;color:var(--success);font-weight:500;margin-bottom:6px;">📍 ' + loc + '</div>' +
-      '<div style="display:flex;gap:16px;"><div style="font-size:11px;color:var(--sub);">제작사 <span style="color:var(--text);font-weight:500;">' + (m.company||'-') + '</span></div>' +
-      '<div style="font-size:11px;color:var(--sub);">품평일 <span style="color:var(--text);font-weight:500;">' + formatDate(m.inDate) + '</span></div></div>' +
+      '<div style="display:flex;gap:16px;"><div style="font-size:11px;color:var(--sub);">'+_t('mfrShort')+' <span style="color:var(--text);font-weight:500;">' + (m.company||'-') + '</span></div>' +
+      '<div style="font-size:11px;color:var(--sub);">'+_t('reviewShort')+' <span style="color:var(--text);font-weight:500;">' + formatDate(m.inDate) + '</span></div></div>' +
       '</div></div>' +
       '</div>';
   });
