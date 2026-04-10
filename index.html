@@ -795,17 +795,18 @@ function applyLang() {
 }
 
 function _updateDynamicTexts() {
+  var _qr = (typeof scannedQR !== 'undefined') ? scannedQR : {register:'',location:'',discard:''};
   // QR 상태 표시들 (스캔 전 상태인 경우만)
   var regVal = document.getElementById('reg-qr-val');
-  if(regVal && !scannedQR.register) regVal.textContent = _t('scanQR');
+  if(regVal && !_qr.register) regVal.textContent = _t('scanQR');
   var regStat = document.getElementById('reg-qr-status');
   if(regStat && regStat.classList.contains('waiting')) regStat.textContent = _t('waiting');
   var locVal = document.getElementById('loc-qr-val');
-  if(locVal && !scannedQR.location) locVal.textContent = _t('scanModelQR');
+  if(locVal && !_qr.location) locVal.textContent = _t('scanModelQR');
   var locStat = document.getElementById('loc-qr-status');
   if(locStat && locStat.classList.contains('waiting')) locStat.textContent = _t('waiting');
   var disVal = document.getElementById('dis-qr-val');
-  if(disVal && !scannedQR.discard) disVal.textContent = _t('scanQR');
+  if(disVal && !_qr.discard) disVal.textContent = _t('scanQR');
   var disStat = document.getElementById('dis-qr-status');
   if(disStat && disStat.classList.contains('waiting')) disStat.textContent = _t('waiting');
   // 위치등록 버튼
@@ -826,6 +827,7 @@ function _updateDynamicTexts() {
   });
 }
 // ────────────────────────────────────────────────────────
+var LOCATIONS = [
   {group:'지하',zones:['지하 ZONE']},
   {group:'스튜디오',zones:['메인 스튜디오','서브 스튜디오']},
   {group:'품평장',zones:['실내 품평장','실외 품평장']},
