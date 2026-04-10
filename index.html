@@ -2269,73 +2269,184 @@ function closeUGOverlay(e) {
   document.getElementById('ug-overlay').style.display = 'none';
 }
 
+// 존별 위치 정의: 평면도 이미지 기준 % (left, top, width, height)
+// 확대시 해당 존이 뷰포트 중앙으로 오도록 originX/originY 설정
+var UG_ZONE_POS = {
+  A: {left:25.5, top:8,  width:16,   height:84, cols:4, spots:16},
+  B: {left:41.5, top:8,  width:11.5, height:84, cols:3, spots:12},
+  C: {left:53,   top:8,  width:16,   height:84, cols:4, spots:16},
+  D: {left:69,   top:8,  width:11.5, height:56, cols:3, spots:12},
+  E: {left:69,   top:64, width:11.5, height:28, cols:3, spots:6},
+};
+
 function _renderUGFloorView() {
   var sheet = document.getElementById('ug-sheet');
-  var zoneHits = [
-    {id:'A', label:'A-Zone', left:'25%', top:'8%', width:'17%', height:'84%'},
-    {id:'B', label:'B-Zone', left:'42%', top:'8%', width:'12%', height:'84%'},
-    {id:'C', label:'C-Zone', left:'54%', top:'8%', width:'17%', height:'84%'},
-    {id:'D', label:'D-Zone', left:'71%', top:'8%', width:'12%', height:'56%'},
-    {id:'E', label:'E-Zone', left:'71%', top:'64%', width:'12%', height:'28%'},
-  ];
+  // 상태 초기화
+  _ugZone = ''; _ugSpot = '';
   var html = '<div class="ug-handle"></div>'
     + '<div style="font-size:16px;font-weight:700;margin-bottom:12px;">지하 주차장</div>'
-    + '<div style="position:relative;width:100%;border-radius:12px;overflow:hidden;">'
-    + '<img src="https://1232ygf-hash.github.io/kia-model-manager-v2/underground-map.jpg" style="width:100%;display:block;" alt="지하창고 평면도">'
-    + '<div style="position:absolute;top:0;left:0;width:100%;height:100%;">';
-  zoneHits.forEach(function(z) {
+    + '<div id="ug-map-wrap" style="position:relative;width:100%;border-radius:12px;overflow:hidden;touch-action:none;">'
+    + '<div id="ug-map-inner" style="position:relative;width:100%;transition:transform 0.4s cubic-bezier(0.4,0,0.2,1);transform-origin:0 0;">'
+    + '<img src="https://1232ygf-hash.github.io/kia-model-manager-v2/underground-map.jpg" id="ug-map-img" style="width:100%;display:block;" alt="지하창고 평면도">'
+    + '<div id="ug-spot-layer" style="position:absolute;top:0;left:0;width:100%;height:100%;pointer-events:none;"></div>'
+    + '</div>'
+    + '<div id="ug-zone-layer" style="position:absolute;top:0;left:0;width:100%;height:100%;">';
+
+  ['A','B','C','D','E'].forEach(function(id) {
+    var p = UG_ZONE_POS[id];
     var zm = (typeof MODELS !== 'undefined' && MODELS)
-      ? MODELS.filter(function(m){return m.status!=='폐기' && m.location && m.location.indexOf('지하 '+z.id+'-')==0;})
+      ? MODELS.filter(function(m){return m.status!=='폐기'&&m.location&&m.location.indexOf('지하 '+id+'-')===0;})
       : [];
     var cnt = zm.length;
-    html += '<div onclick="openUGZone(\''+z.id+'\')" style="position:absolute;left:'+z.left+';top:'+z.top+';width:'+z.width+';height:'+z.height+';cursor:pointer;border-radius:4px;border:2px solid transparent;transition:all 0.15s;display:flex;flex-direction:column;align-items:center;justify-content:center;gap:3px;" '
-      + 'onmouseover="this.style.background=\'rgba(0,122,255,0.18)\';this.style.borderColor=\'rgba(0,122,255,0.6)\'" '
+    html += '<div id="ugz-'+id+'" onclick="zoomToZone(\''+id+'\')" '
+      + 'style="position:absolute;left:'+p.left+'%;top:'+p.top+'%;width:'+p.width+'%;height:'+p.height+'%;'
+      + 'cursor:pointer;display:flex;flex-direction:column;align-items:center;justify-content:center;gap:3px;'
+      + 'border-radius:6px;border:2px solid transparent;transition:all 0.15s;" '
+      + 'onmouseover="this.style.background=\'rgba(0,122,255,0.15)\';this.style.borderColor=\'rgba(0,122,255,0.7)\'" '
       + 'onmouseout="this.style.background=\'transparent\';this.style.borderColor=\'transparent\'">'
-      + '<div style="background:rgba(0,0,0,0.65);color:#fff;font-size:10px;font-weight:500;padding:3px 8px;border-radius:10px;pointer-events:none;">'+z.label+'</div>'
-      + (cnt>0?'<div style="background:#007AFF;color:#fff;font-size:9px;font-weight:600;padding:2px 6px;border-radius:8px;pointer-events:none;">'+cnt+'대</div>':'')
+      + '<div style="background:rgba(0,0,0,0.7);color:#fff;font-size:13px;font-weight:700;padding:4px 10px;border-radius:8px;pointer-events:none;letter-spacing:0.5px;">'+id+'</div>'
+      + (cnt>0?'<div style="background:#007AFF;color:#fff;font-size:9px;font-weight:600;padding:2px 6px;border-radius:6px;pointer-events:none;">'+cnt+'대</div>':'')
       + '</div>';
   });
-  html += '</div></div>';
-  sheet.innerHTML = html;
-}
-
-function openUGZone(zid) {
-  _ugZone = zid;
-  _ugSpot = '';
-  var z = UNDERGROUND_ZONES.find(function(x){return x.id===zid;});
-  var sheet = document.getElementById('ug-sheet');
-  var html = '<div class="ug-handle"></div>'
-    + '<div style="display:flex;align-items:center;justify-content:space-between;margin-bottom:12px;">'
-    + '<div style="font-size:16px;font-weight:700;">지하 '+z.label+'</div>'
-    + '<button onclick="_renderUGFloorView()" style="font-size:12px;color:#8E8E93;background:none;border:0.5px solid #C7C7CC;border-radius:20px;padding:4px 12px;cursor:pointer;">← 전체 보기</button>'
-    + '</div>'
-    + '<div style="display:grid;grid-template-columns:repeat('+z.cols+',1fr);gap:6px;">';
-
-  for (var i = 1; i <= z.spots; i++) {
-    var spotKey = zid + '-' + i;
-    var fullLoc = '지하 ' + spotKey;
-    var occupied = (typeof MODELS !== 'undefined' && MODELS)
-      ? MODELS.find(function(m){return m.status!=='폐기' && m.location===fullLoc;})
-      : null;
-    if (occupied) {
-      html += '<div style="border:1.5px solid #1C1C1E;border-radius:10px;background:#1C1C1E;padding:0;display:flex;flex-direction:column;align-items:center;justify-content:center;aspect-ratio:3/4;overflow:hidden;cursor:default;">'
-        + '<span style="font-size:10px;color:rgba(255,255,255,0.5);">'+i+'</span>'
-        + '<span style="font-size:9px;font-weight:600;color:#fff;text-align:center;padding:0 3px;line-height:1.2;word-break:break-all;margin-top:2px;">'+occupied.project+'</span>'
-        + '</div>';
-    } else {
-      html += '<button onclick="selectUGSpot(\''+spotKey+'\')" data-ugspot="'+spotKey+'" '
-        + 'style="border:1.5px solid #D1D1D6;border-radius:10px;background:#fff;padding:0;display:flex;flex-direction:column;align-items:center;justify-content:center;aspect-ratio:3/4;cursor:pointer;transition:all 0.15s;">'
-        + '<span style="font-size:13px;font-weight:500;color:#8E8E93;">'+i+'</span>'
-        + '</button>';
-    }
-  }
-  html += '</div>'
+  html += '</div></div>'
     + '<div id="ug-confirm-bar" style="display:none;margin-top:12px;">'
     + '<div id="ug-sel-info" style="font-size:12px;color:#8E8E93;text-align:center;margin-bottom:8px;"></div>'
     + '<button id="ug-confirm-btn" onclick="confirmUGSpot()" style="width:100%;background:#000;color:#fff;border:none;border-radius:14px;padding:14px;font-size:15px;font-weight:700;cursor:pointer;font-family:\'Pretendard\',sans-serif;">디자인 모델 위치 등록</button>'
     + '</div>';
   sheet.innerHTML = html;
 }
+
+function zoomToZone(zid) {
+  _ugZone = zid; _ugSpot = '';
+  var p = UG_ZONE_POS[zid];
+  var wrap = document.getElementById('ug-map-wrap');
+  var inner = document.getElementById('ug-map-inner');
+  var zoneLayer = document.getElementById('ug-zone-layer');
+  if (!wrap || !inner) return;
+
+  var wrapW = wrap.offsetWidth;
+  var imgNaturalRatio = 1527 / 600; // 원본 이미지 비율 (가로/세로)
+  var imgH = wrapW / imgNaturalRatio;
+
+  // 존 중심 좌표 (px)
+  var zoneCX = wrapW * (p.left + p.width/2) / 100;
+  var zoneCY = imgH  * (p.top  + p.height/2) / 100;
+
+  // 확대 배율: 뷰포트 너비 / 존 너비
+  var scale = Math.min(wrapW / (wrapW * p.width / 100) * 0.85, 4);
+
+  // transform-origin을 존 중심으로, translate로 중앙 정렬
+  var tx = wrapW/2 - zoneCX * scale;
+  var ty = imgH/2  - zoneCY * scale;
+
+  inner.style.transformOrigin = '0 0';
+  inner.style.transform = 'translate('+tx+'px,'+ty+'px) scale('+scale+')';
+  // wrap 높이를 이미지 높이로 고정 (스크롤 방지)
+  wrap.style.height = imgH + 'px';
+
+  // 존 레이어 숨기고 뒤로가기 버튼 표시
+  zoneLayer.style.display = 'none';
+
+  // 뒤로가기 버튼 주입
+  var backBtn = document.getElementById('ug-back-btn');
+  if (!backBtn) {
+    backBtn = document.createElement('div');
+    backBtn.id = 'ug-back-btn';
+    backBtn.style.cssText = 'display:flex;align-items:center;justify-content:space-between;margin-bottom:10px;';
+    backBtn.innerHTML = '<div style="font-size:15px;font-weight:700;">지하 '+zid+'-Zone</div>'
+      + '<button onclick="zoomOut()" style="font-size:12px;color:#8E8E93;background:none;border:0.5px solid #C7C7CC;border-radius:20px;padding:4px 12px;cursor:pointer;font-family:\'Pretendard\',sans-serif;">← 전체 보기</button>';
+    var mapWrap = document.getElementById('ug-map-wrap');
+    mapWrap.parentNode.insertBefore(backBtn, mapWrap);
+  } else {
+    backBtn.style.display = 'flex';
+    backBtn.querySelector('div').textContent = '지하 '+zid+'-Zone';
+  }
+
+  // 스팟 레이어 렌더
+  _renderSpotLayer(zid, scale);
+}
+
+function zoomOut() {
+  _ugZone = ''; _ugSpot = '';
+  var inner = document.getElementById('ug-map-inner');
+  var wrap  = document.getElementById('ug-map-wrap');
+  var zoneLayer = document.getElementById('ug-zone-layer');
+  var backBtn = document.getElementById('ug-back-btn');
+  var spotLayer = document.getElementById('ug-spot-layer');
+  if (inner) { inner.style.transform = 'translate(0,0) scale(1)'; }
+  if (wrap)  { wrap.style.height = ''; }
+  if (zoneLayer) zoneLayer.style.display = 'block';
+  if (backBtn) backBtn.style.display = 'none';
+  if (spotLayer) spotLayer.innerHTML = '';
+  // 확인바 숨김
+  var bar = document.getElementById('ug-confirm-bar');
+  if (bar) bar.style.display = 'none';
+}
+
+function _renderSpotLayer(zid, scale) {
+  var p = UG_ZONE_POS[zid];
+  var layer = document.getElementById('ug-spot-layer');
+  if (!layer) return;
+  layer.style.pointerEvents = 'auto';
+  layer.innerHTML = '';
+
+  var cols = p.cols;
+  var spots = p.spots;
+  var rows = Math.ceil(spots / cols);
+
+  // 존 영역 내 패딩 (존 width의 %)
+  var padX = 0.08, padY = 0.06;
+  var zoneL = p.left/100, zoneT = p.top/100, zoneW = p.width/100, zoneH = p.height/100;
+  var innerL = zoneL + zoneW*padX;
+  var innerT = zoneT + zoneH*padY;
+  var innerW = zoneW*(1-padX*2);
+  var innerH = zoneH*(1-padY*2);
+
+  var cellW = innerW / cols;
+  var cellH = innerH / rows;
+  var spotW = cellW * 0.82;
+  var spotH = cellH * 0.72;
+
+  for (var i = 0; i < spots; i++) {
+    var row = Math.floor(i/cols);
+    var col = i % cols;
+    var spotNum = i+1;
+    var spotKey = zid+'-'+spotNum;
+    var fullLoc = '지하 '+spotKey;
+    var occupied = (typeof MODELS !== 'undefined' && MODELS)
+      ? MODELS.find(function(m){return m.status!=='폐기'&&m.location===fullLoc;})
+      : null;
+
+    var cx = (innerL + col*cellW + cellW/2 - spotW/2)*100;
+    var cy = (innerT + row*cellH + cellH/2 - spotH/2)*100;
+
+    var el = document.createElement(occupied?'div':'button');
+    el.style.cssText = 'position:absolute;'
+      + 'left:'+cx+'%;top:'+cy+'%;width:'+spotW*100+'%;height:'+spotH*100+'%;'
+      + 'border-radius:8px;display:flex;flex-direction:column;align-items:center;justify-content:center;'
+      + 'overflow:hidden;transition:all 0.15s;box-sizing:border-box;';
+
+    if (occupied) {
+      el.style.background = '#1C1C1E';
+      el.style.border = '1.5px solid #1C1C1E';
+      el.style.cursor = 'default';
+      el.innerHTML = '<span style="font-size:8px;color:rgba(255,255,255,0.45);line-height:1;">'+spotNum+'</span>'
+        + '<span style="font-size:7px;font-weight:600;color:#fff;text-align:center;padding:0 2px;line-height:1.2;word-break:break-all;margin-top:1px;">'+occupied.project+'</span>';
+    } else {
+      el.style.background = '#fff';
+      el.style.border = '1.5px solid #D1D1D6';
+      el.style.cursor = 'pointer';
+      el.setAttribute('data-ugspot', spotKey);
+      el.innerHTML = '<span style="font-size:9px;font-weight:500;color:#8E8E93;">'+spotNum+'</span>';
+      (function(btn, key){
+        btn.onclick = function(){ selectUGSpot(key); };
+      })(el, spotKey);
+    }
+    layer.appendChild(el);
+  }
+}
+
+function openUGZone(zid) { zoomToZone(zid); }
 
 function selectUGSpot(spotKey) {
   _ugSpot = spotKey;
