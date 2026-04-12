@@ -2167,6 +2167,7 @@ function submitRegister() {
 
 // 갤럭시 백버튼 처리
 var screenHistory = ['screen-login'];
+var _exitConfirmShowing = false;
 
 var _origGoTo = goTo;
 goTo = function(id) {
@@ -2174,12 +2175,22 @@ goTo = function(id) {
   if (id !== screenHistory[screenHistory.length-1]) {
     screenHistory.push(id);
   }
-  // 화면 이동마다 스택 2개 확보 (1개는 popstate 소비용, 1개는 버퍼)
-  history.pushState({screen: id}, '', location.href);
+  _exitConfirmShowing = false;
   history.pushState({screen: id}, '', location.href);
 };
 
+// 300ms마다 스택 1개씩 보충 → 연타해도 절대 바닥 안남
+setInterval(function() {
+  history.pushState({screen: currentScreen}, '', location.href);
+}, 300);
+
 window.addEventListener('popstate', function(e) {
+
+  // 종료 확인 중이면 스택만 보충하고 무시
+  if (_exitConfirmShowing) {
+    history.pushState({screen: currentScreen}, '', location.href);
+    return;
+  }
 
   // 팝업 처리
   var ugSelectOverlay = document.getElementById('ug-select-overlay');
@@ -2205,23 +2216,27 @@ window.addEventListener('popstate', function(e) {
     azoneOverlay.style.display = 'none'; return;
   }
 
-  // 홈/로그인 → 나가기 확인 다이얼로그 (pushState 먼저 하지 않음)
+  // 홈/로그인 → 나가기 확인
   if (currentScreen === 'screen-home' || currentScreen === 'screen-login') {
-    // 스택 보충 (연타 대비)
     history.pushState({screen: currentScreen}, '', location.href);
-    history.pushState({screen: currentScreen}, '', location.href);
+    _exitConfirmShowing = true;
     showConfirm(
       _lang === 'ko' ? '앱을 종료하시겠습니까?' : 'Exit the app?',
-      function() { history.go(-3); }, // 예 → 진짜 나가기
-      function() {}                   // 아니오 → 머무름
+      function() {
+        _exitConfirmShowing = false;
+        try { window.close(); } catch(e) {}
+        history.go(-999);
+      },
+      function() {
+        _exitConfirmShowing = false;
+        history.pushState({screen: currentScreen}, '', location.href);
+      }
     );
     return;
   }
 
-  // 그 외엔 pushState로 차단
-  history.pushState({screen: currentScreen}, '', location.href);
-
   // zone-detail 전단계 처리
+  history.pushState({screen: currentScreen}, '', location.href);
   if (currentScreen === 'screen-zone-detail') {
     var screenEl2 = document.getElementById('screen-zone-detail');
     var prevState = screenEl2 ? screenEl2.getAttribute('data-prev') : '';
@@ -2242,9 +2257,9 @@ window.addEventListener('popstate', function(e) {
   }
 });
 
-// 초기 상태 설정
+// 초기 스택
 (function() {
-  for (var _i = 0; _i < 5; _i++) {
+  for (var _i = 0; _i < 10; _i++) {
     history.pushState({screen: 'screen-login'}, '', location.href);
   }
 })();
