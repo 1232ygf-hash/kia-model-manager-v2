@@ -1804,6 +1804,10 @@ function showUndergroundZoneList(models) {
   if(!list) return;
 
   var html = '<div style="padding:16px 16px 0;">';
+  // 지하 평면도 이미지
+  html += '<div style="width:100%;border-radius:12px;overflow:hidden;margin-bottom:14px;">'
+    + '<img src="https://1232ygf-hash.github.io/kia-model-manager-v2/underground-map.jpg?v=2" style="width:100%;display:block;" alt="지하 평면도">'
+    + '</div>';
   ['A','B','C','D','E'].forEach(function(zid){
     var zone = '지하 '+zid+' ZONE';
     var zm = models.filter(function(m){
