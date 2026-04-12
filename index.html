@@ -2179,29 +2179,44 @@ goTo = function(id) {
 };
 
 window.addEventListener('popstate', function(e) {
-  // 즉시 현재 상태로 되돌리기 (빠져나가기 차단)
-  history.pushState({screen: currentScreen}, '', location.href);
 
   // 팝업 처리
   var ugSelectOverlay = document.getElementById('ug-select-overlay');
   if (ugSelectOverlay && ugSelectOverlay.style.display !== 'none') {
+    history.pushState({screen: currentScreen}, '', location.href);
     ugSelectOverlay.style.display = 'none'; return;
   }
   var parkingOverlay = document.getElementById('parking-overlay');
   if (parkingOverlay && parkingOverlay.style.display !== 'none') {
+    history.pushState({screen: currentScreen}, '', location.href);
     parkingOverlay.style.display = 'none';
     if (_parkingZone && _parkingZone.indexOf('지하 ') === 0) openUndergroundSelect();
     return;
   }
   var confirmOverlay = document.getElementById('confirm-overlay');
-  if (confirmOverlay) { confirmOverlay.remove(); return; }
+  if (confirmOverlay) {
+    history.pushState({screen: currentScreen}, '', location.href);
+    confirmOverlay.remove(); return;
+  }
   var azoneOverlay = document.getElementById('azone-detail-overlay');
   if (azoneOverlay && azoneOverlay.style.display !== 'none') {
+    history.pushState({screen: currentScreen}, '', location.href);
     azoneOverlay.style.display = 'none'; return;
   }
 
-  // 홈/로그인 → 무시 (앱 안에 머무름)
-  if (currentScreen === 'screen-home' || currentScreen === 'screen-login') return;
+  // 홈/로그인 → 나가기 확인 다이얼로그 (pushState 먼저 하지 않음)
+  if (currentScreen === 'screen-home' || currentScreen === 'screen-login') {
+    history.pushState({screen: currentScreen}, '', location.href);
+    showConfirm(
+      _lang === 'ko' ? '앱을 종료하시겠습니까?' : 'Exit the app?',
+      function() { history.go(-2); }, // 예 → 진짜 나가기
+      function() {}                   // 아니오 → 머무름
+    );
+    return;
+  }
+
+  // 그 외엔 pushState로 차단
+  history.pushState({screen: currentScreen}, '', location.href);
 
   // zone-detail 전단계 처리
   if (currentScreen === 'screen-zone-detail') {
