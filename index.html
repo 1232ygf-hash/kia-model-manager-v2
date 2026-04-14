@@ -2191,6 +2191,9 @@ window.addEventListener('popstate', function(e) {
   history.pushState({screen: currentScreen, ts: Date.now()}, '', location.href);
   history.pushState({screen: currentScreen, ts: Date.now()}, '', location.href);
 
+  // 디버그 - 현재 상태 확인
+  showToast('현재:' + currentScreen + ' | 히스토리:' + screenHistory.length + '개');
+
   // 종료 확인 다이얼로그 떠있으면 무시
   if (_exitConfirmShowing || document.getElementById('exit-confirm-overlay')) return;
 
@@ -2263,13 +2266,6 @@ window.addEventListener('popstate', function(e) {
     _origGoTo(prev);
   }
 });
-
-// 초기 스택
-(function() {
-  history.pushState({screen: 'screen-login', ts: Date.now()}, '', location.href);
-  history.pushState({screen: 'screen-login', ts: Date.now()}, '', location.href);
-  history.pushState({screen: 'screen-login', ts: Date.now()}, '', location.href);
-})();
 
 
 // 폐기 탭 전환
@@ -2681,6 +2677,13 @@ function showLoading(show){document.getElementById('loading-overlay').style.disp
   // 세션 없으면 로그인 버튼 정상화
   var loginBtn = document.querySelector('.login-btn');
   if(loginBtn){loginBtn.textContent=_lang==='ko'?'로그인':'Log in';loginBtn.disabled=false;loginBtn.classList.remove('btn-loading');}
+})();
+
+// 초기 스택 - 자동로그인 이후 실행 (goTo 래핑 이후이므로 pushState 정상 동작)
+(function() {
+  for(var _si = 0; _si < 5; _si++) {
+    history.pushState({screen: currentScreen, ts: Date.now()}, '', location.href);
+  }
 })();
 
 
