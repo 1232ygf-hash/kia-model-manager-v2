@@ -111,9 +111,9 @@ body{background:var(--bg);color:var(--text);font-family:'Pretendard',sans-serif;
 .qr-id{font-family:'DM Mono',monospace;font-size:12px;color:var(--sub);}
 .qr-status{font-size:12px;font-weight:600;padding:4px 10px;border-radius:20px;font-family:'Bebas Neue',sans-serif;letter-spacing:1px;white-space:nowrap;flex-shrink:0;}
 
-.parking-overlay{position:fixed;inset:0;background:rgba(0,0,0,0.5);display:flex;align-items:flex-end;z-index:9999;}
+.parking-overlay{position:fixed;inset:0;background:rgba(0,0,0,0.5);display:flex;align-items:flex-end;justify-content:center;z-index:9999;}
 #toast{z-index:99999!important;}
-.parking-sheet{background:#fff;border-radius:20px 20px 0 0;width:100%;padding:20px 16px 40px;max-height:92vh;overflow-y:auto;}
+.parking-sheet{background:#fff;border-radius:20px 20px 0 0;width:100%;max-width:480px;padding:20px 16px 40px;max-height:92vh;overflow-y:auto;}
 .parking-handle{width:40px;height:4px;background:#E5E5EA;border-radius:2px;margin:0 auto 14px;}
 .parking-lot{background:#F2F2F7;border:2px solid #E5E5EA;border-radius:20px;padding:12px;display:grid;gap:10px;}
 .car-spot-btn{cursor:pointer;border:none;background:none;padding:0;display:flex;justify-content:center;width:100%;}
@@ -1900,8 +1900,8 @@ function showParkingGrid(zone, models) {
   html += '</div></div></div>';
 
   // 모델 상세 팝업 (hidden)
-  html += '<div id="azone-detail-overlay" style="display:none;position:fixed;inset:0;background:rgba(0,0,0,0.5);z-index:9999;align-items:flex-end;" onclick="closeAZoneDetail(event)">';
-  html += '<div style="background:#fff;border-radius:20px 20px 0 0;width:100%;padding:20px 16px 40px;max-height:85vh;overflow-y:auto;">';
+  html += '<div id="azone-detail-overlay" style="display:none;position:fixed;inset:0;background:rgba(0,0,0,0.5);z-index:9999;align-items:flex-end;justify-content:center;" onclick="closeAZoneDetail(event)">';
+  html += '<div style="background:#fff;border-radius:20px 20px 0 0;width:100%;max-width:480px;padding:20px 16px 40px;max-height:85vh;overflow-y:auto;">';
   html += '<div style="width:40px;height:4px;background:#E5E5EA;border-radius:2px;margin:0 auto 16px;"></div>';
   html += '<div style="background:#fff;border-radius:16px;overflow:hidden;box-shadow:var(--shadow-sm);margin-bottom:16px;">';
   html += '<div style="padding:14px 20px;border-bottom:1px solid var(--line);"><div style="font-size:12px;color:var(--sub);">'+_t('labelProject')+'</div><div id="azd-project" style="font-size:15px;font-weight:600;margin-top:2px;"></div></div>';
@@ -2180,13 +2180,15 @@ goTo = function(id) {
     screenHistory.push(id);
   }
   _exitConfirmShowing = false;
-  // 화면마다 state push
+  // 화면 이동마다 스택 3개 확보
+  history.pushState({screen: id, ts: Date.now()}, '', location.href);
+  history.pushState({screen: id, ts: Date.now()}, '', location.href);
   history.pushState({screen: id, ts: Date.now()}, '', location.href);
 };
 
 window.addEventListener('popstate', function(e) {
-
-  // 즉시 스택 복구
+  // 즉시 스택 2개 복구
+  history.pushState({screen: currentScreen, ts: Date.now()}, '', location.href);
   history.pushState({screen: currentScreen, ts: Date.now()}, '', location.href);
 
   // 종료 확인 다이얼로그 떠있으면 무시
@@ -2264,6 +2266,8 @@ window.addEventListener('popstate', function(e) {
 
 // 초기 스택
 (function() {
+  history.pushState({screen: 'screen-login', ts: Date.now()}, '', location.href);
+  history.pushState({screen: 'screen-login', ts: Date.now()}, '', location.href);
   history.pushState({screen: 'screen-login', ts: Date.now()}, '', location.href);
 })();
 
@@ -2809,8 +2813,8 @@ document.getElementById('reg-date').valueAsDate=new Date();
 </script>
 
 <!-- 지하 ZONE 선택 팝업 (이미지 + ABCDE 버튼) -->
-<div id="ug-select-overlay" style="display:none;position:fixed;inset:0;background:rgba(0,0,0,0.5);align-items:flex-end;z-index:9999;" onclick="closeUGSelectOverlay(event)">
-  <div style="background:#fff;border-radius:20px 20px 0 0;width:100%;padding:20px 16px 40px;max-height:92vh;overflow-y:auto;">
+<div id="ug-select-overlay" style="display:none;position:fixed;inset:0;background:rgba(0,0,0,0.5);align-items:flex-end;justify-content:center;z-index:9999;" onclick="closeUGSelectOverlay(event)">
+  <div style="background:#fff;border-radius:20px 20px 0 0;width:100%;max-width:480px;padding:20px 16px 40px;max-height:92vh;overflow-y:auto;">
     <div style="width:40px;height:4px;background:#E5E5EA;border-radius:2px;margin:0 auto 14px;"></div>
     <div style="font-size:16px;font-weight:700;margin-bottom:12px;" id="ug-select-title" data-i18n="ugSelectTitle">지하 주차장 — ZONE 선택</div>
     <!-- 평면도 이미지 -->
