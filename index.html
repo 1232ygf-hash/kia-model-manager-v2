@@ -2180,19 +2180,13 @@ goTo = function(id) {
     screenHistory.push(id);
   }
   _exitConfirmShowing = false;
-  // 화면 이동마다 스택 3개 확보
-  history.pushState({screen: id, ts: Date.now()}, '', location.href);
-  history.pushState({screen: id, ts: Date.now()}, '', location.href);
+  // 화면마다 스택 1개
   history.pushState({screen: id, ts: Date.now()}, '', location.href);
 };
 
 window.addEventListener('popstate', function(e) {
-  // 즉시 스택 2개 복구
+  // 즉시 스택 1개 복구
   history.pushState({screen: currentScreen, ts: Date.now()}, '', location.href);
-  history.pushState({screen: currentScreen, ts: Date.now()}, '', location.href);
-
-  // 디버그 - 현재 상태 확인
-  showToast('현재:' + currentScreen + ' | 히스토리:' + screenHistory.length + '개');
 
   // 종료 확인 다이얼로그 떠있으면 무시
   if (_exitConfirmShowing || document.getElementById('exit-confirm-overlay')) return;
@@ -2679,11 +2673,9 @@ function showLoading(show){document.getElementById('loading-overlay').style.disp
   if(loginBtn){loginBtn.textContent=_lang==='ko'?'로그인':'Log in';loginBtn.disabled=false;loginBtn.classList.remove('btn-loading');}
 })();
 
-// 초기 스택 - 자동로그인 이후 실행 (goTo 래핑 이후이므로 pushState 정상 동작)
+// 초기 스택
 (function() {
-  for(var _si = 0; _si < 5; _si++) {
-    history.pushState({screen: currentScreen, ts: Date.now()}, '', location.href);
-  }
+  history.pushState({screen: currentScreen, ts: Date.now()}, '', location.href);
 })();
 
 
