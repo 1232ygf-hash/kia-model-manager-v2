@@ -49,7 +49,7 @@ body{background:var(--bg);color:var(--text);font-family:'Pretendard',sans-serif;
 .content{flex:1;padding:0;overflow-y:auto;padding-bottom:48px;}
 
 /* 로그인 */
-#screen-login{background:var(--card);justify-content:center;align-items:center;padding:32px 32px;height:100vh;min-height:unset;overflow:hidden;box-sizing:border-box;}
+#screen-login{background:var(--card);justify-content:center;align-items:center;padding:40px 32px;}
 .login-logo{text-align:center;margin-bottom:40px;margin-top:10px;}
 .kia-logo-img{width:180px;height:auto;display:block;margin:0 auto;}
 .login-logo .sub{font-size:18px;font-weight:400;color:var(--sub);letter-spacing:1px;margin-top:6px;font-family:'Bebas Neue',sans-serif;}
@@ -61,12 +61,6 @@ body{background:var(--bg);color:var(--text);font-family:'Pretendard',sans-serif;
 .input-group input::placeholder{color:#C7C7CC;}
 .login-btn{width:100%;background:var(--text);border:none;border-radius:14px;padding:16px;font-family:'Pretendard',sans-serif;font-size:16px;font-weight:700;color:white;cursor:pointer;margin-top:20px;transition:opacity 0.2s;}
 .login-btn:active{opacity:0.75;}
-/* 글씨 크기 조절 */
-.font-size-ctrl{display:flex;align-items:center;justify-content:center;gap:10px;margin-top:24px;}
-.font-size-ctrl-label{font-size:11px;color:var(--sub);font-family:'Bebas Neue',sans-serif;letter-spacing:1px;}
-.font-size-btn{background:var(--fill);border:1px solid var(--line);border-radius:10px;width:38px;height:38px;font-family:'Bebas Neue',sans-serif;font-size:16px;font-weight:700;cursor:pointer;color:var(--text);transition:background 0.15s;}
-.font-size-btn:active{background:#D0D0D5;}
-.font-size-val{font-family:'DM Mono',monospace;font-size:13px;color:var(--sub);min-width:36px;text-align:center;}
 
 /* 홈 */
 #screen-home{background:var(--bg);}
@@ -269,12 +263,6 @@ input[type="date"].form-input-inline{color-scheme:light;text-align:right;}
 </div>
     <div class="input-group"><label>비밀번호</label><input type="password" id="login-pw" placeholder="비밀번호 입력"></div>
     <button class="login-btn" onclick="doLogin()">로그인</button>
-    <div class="font-size-ctrl">
-      <span class="font-size-ctrl-label">FONT</span>
-      <button class="font-size-btn" onclick="changeFontSize(-1)">A-</button>
-      <span class="font-size-val" id="font-size-display">100%</span>
-      <button class="font-size-btn" onclick="changeFontSize(1)">A+</button>
-    </div>
   </div>
 </div>
 
@@ -1010,8 +998,6 @@ function goTo(id) {
   if (nxt) nxt.classList.add('active');
   currentScreen = id;
   window.scrollTo(0,0);
-  // 로그인 화면일 때 body 스크롤 완전 차단, 다른 화면은 복원
-  document.body.style.overflow = (id === 'screen-login') ? 'hidden' : '';
   if (id === 'screen-account') loadAccounts();
   if (id === 'screen-login') {
     var _pw = document.getElementById('login-pw');
@@ -2817,40 +2803,6 @@ function confirmParkingSpot() {
 // ────────────────────────────────────────
 
 function showToast(msg){var t=document.getElementById('toast');if(!t)return;t.textContent=msg;t.classList.add('show');setTimeout(function(){t.classList.remove('show');},2500);}
-
-// ── 글씨 크기 조절 (zoom 방식 — px 단위 텍스트에도 적용됨) ──
-var FONT_STEPS = [1.00, 1.10, 1.20, 1.30];
-var FONT_LABELS = ['100%','110%','120%','130%'];
-var _fontIdx = 0; // 기본: 100%
-
-function _applyFontSize() {
-  var z = FONT_STEPS[_fontIdx];
-  document.body.style.zoom = z;
-  var el = document.getElementById('font-size-display');
-  if (el) el.textContent = FONT_LABELS[_fontIdx];
-}
-
-function changeFontSize(dir) {
-  var next = _fontIdx + dir;
-  if (next < 0 || next >= FONT_STEPS.length) return;
-  _fontIdx = next;
-  _applyFontSize();
-  try { localStorage.setItem('kia_font_idx', String(_fontIdx)); } catch(e) {}
-}
-
-(function initFontSize() {
-  try {
-    var saved = localStorage.getItem('kia_font_idx');
-    if (saved !== null) {
-      var n = parseInt(saved, 10);
-      if (!isNaN(n) && n >= 0 && n < FONT_STEPS.length) _fontIdx = n;
-    }
-  } catch(e) {}
-  _applyFontSize();
-  // 초기 화면이 로그인이면 스크롤 차단
-  document.body.style.overflow = 'hidden';
-})();
-// ─────────────────────────────────────────────────────────────
 
 document.getElementById('reg-date').valueAsDate=new Date();
 </script>
