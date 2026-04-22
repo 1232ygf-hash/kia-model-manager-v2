@@ -61,6 +61,12 @@ body{background:var(--bg);color:var(--text);font-family:'Pretendard',sans-serif;
 .input-group input::placeholder{color:#C7C7CC;}
 .login-btn{width:100%;background:var(--text);border:none;border-radius:14px;padding:16px;font-family:'Pretendard',sans-serif;font-size:16px;font-weight:700;color:white;cursor:pointer;margin-top:20px;transition:opacity 0.2s;}
 .login-btn:active{opacity:0.75;}
+/* 글씨 크기 조절 */
+.font-size-ctrl{display:flex;align-items:center;justify-content:center;gap:10px;margin-top:24px;}
+.font-size-ctrl span{font-size:12px;color:var(--sub);font-family:'Bebas Neue',sans-serif;letter-spacing:1px;}
+.font-size-btn{background:var(--fill);border:1px solid var(--line);border-radius:10px;width:38px;height:38px;font-family:'Bebas Neue',sans-serif;font-size:16px;font-weight:700;cursor:pointer;color:var(--text);transition:background 0.15s;}
+.font-size-btn:active{background:#E0E0E5;}
+.font-size-val{font-family:'DM Mono',monospace;font-size:13px;color:var(--sub);min-width:36px;text-align:center;}
 
 /* 홈 */
 #screen-home{background:var(--bg);}
@@ -263,6 +269,12 @@ input[type="date"].form-input-inline{color-scheme:light;text-align:right;}
 </div>
     <div class="input-group"><label>비밀번호</label><input type="password" id="login-pw" placeholder="비밀번호 입력"></div>
     <button class="login-btn" onclick="doLogin()">로그인</button>
+    <div class="font-size-ctrl">
+      <span>FONT</span>
+      <button class="font-size-btn" onclick="changeFontSize(-1)">A-</button>
+      <span class="font-size-val" id="font-size-display">100%</span>
+      <button class="font-size-btn" onclick="changeFontSize(1)">A+</button>
+    </div>
   </div>
 </div>
 
@@ -2803,6 +2815,34 @@ function confirmParkingSpot() {
 // ────────────────────────────────────────
 
 function showToast(msg){var t=document.getElementById('toast');if(!t)return;t.textContent=msg;t.classList.add('show');setTimeout(function(){t.classList.remove('show');},2500);}
+
+// ── 글씨 크기 조절 ──────────────────────────────────
+var FONT_STEPS = [85, 92, 100, 108, 115, 130]; // %
+var _fontIdx = 2; // 기본: 100%
+
+function _applyFontSize() {
+  var pct = FONT_STEPS[_fontIdx];
+  document.documentElement.style.fontSize = pct + '%';
+  var el = document.getElementById('font-size-display');
+  if (el) el.textContent = pct + '%';
+}
+
+function changeFontSize(dir) {
+  var next = _fontIdx + dir;
+  if (next < 0 || next >= FONT_STEPS.length) return;
+  _fontIdx = next;
+  _applyFontSize();
+  try { localStorage.setItem('kia_font_idx', String(_fontIdx)); } catch(e){}
+}
+
+(function() {
+  try {
+    var saved = localStorage.getItem('kia_font_idx');
+    if (saved !== null) { var n = parseInt(saved, 10); if (!isNaN(n) && n >= 0 && n < FONT_STEPS.length) _fontIdx = n; }
+  } catch(e){}
+  _applyFontSize();
+})();
+// ────────────────────────────────────────────────────
 
 document.getElementById('reg-date').valueAsDate=new Date();
 </script>
