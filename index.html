@@ -49,7 +49,7 @@ body{background:var(--bg);color:var(--text);font-family:'Pretendard',sans-serif;
 .content{flex:1;padding:0;overflow-y:auto;padding-bottom:48px;}
 
 /* 로그인 */
-#screen-login{background:var(--card);justify-content:center;align-items:center;padding:40px 32px;}
+#screen-login{background:var(--card);justify-content:center;align-items:center;padding:40px 32px;height:100vh;min-height:unset;overflow-y:auto;box-sizing:border-box;}
 .login-logo{text-align:center;margin-bottom:40px;margin-top:10px;}
 .kia-logo-img{width:180px;height:auto;display:block;margin:0 auto;}
 .login-logo .sub{font-size:18px;font-weight:400;color:var(--sub);letter-spacing:1px;margin-top:6px;font-family:'Bebas Neue',sans-serif;}
@@ -2817,9 +2817,9 @@ function confirmParkingSpot() {
 function showToast(msg){var t=document.getElementById('toast');if(!t)return;t.textContent=msg;t.classList.add('show');setTimeout(function(){t.classList.remove('show');},2500);}
 
 // ── 글씨 크기 조절 (zoom 방식 — px 단위 텍스트에도 적용됨) ──
-var FONT_STEPS = [0.85, 0.92, 1.00, 1.08, 1.15, 1.30];
-var FONT_LABELS = ['85%','92%','100%','108%','115%','130%'];
-var _fontIdx = 2; // 기본: 100%
+var FONT_STEPS = [1.00, 1.10, 1.20, 1.30];
+var FONT_LABELS = ['100%','110%','120%','130%'];
+var _fontIdx = 0; // 기본: 100%
 
 function _applyFontSize() {
   var z = FONT_STEPS[_fontIdx];
