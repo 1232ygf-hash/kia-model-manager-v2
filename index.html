@@ -49,7 +49,7 @@ body{background:var(--bg);color:var(--text);font-family:'Pretendard',sans-serif;
 .content{flex:1;padding:0;overflow-y:auto;padding-bottom:48px;}
 
 /* 로그인 */
-#screen-login{background:var(--card);justify-content:center;align-items:center;padding:40px 32px;height:100vh;min-height:unset;overflow-y:auto;box-sizing:border-box;}
+#screen-login{background:var(--card);justify-content:center;align-items:center;padding:32px 32px;height:100vh;min-height:unset;overflow:hidden;box-sizing:border-box;}
 .login-logo{text-align:center;margin-bottom:40px;margin-top:10px;}
 .kia-logo-img{width:180px;height:auto;display:block;margin:0 auto;}
 .login-logo .sub{font-size:18px;font-weight:400;color:var(--sub);letter-spacing:1px;margin-top:6px;font-family:'Bebas Neue',sans-serif;}
@@ -1010,6 +1010,8 @@ function goTo(id) {
   if (nxt) nxt.classList.add('active');
   currentScreen = id;
   window.scrollTo(0,0);
+  // 로그인 화면일 때 body 스크롤 완전 차단, 다른 화면은 복원
+  document.body.style.overflow = (id === 'screen-login') ? 'hidden' : '';
   if (id === 'screen-account') loadAccounts();
   if (id === 'screen-login') {
     var _pw = document.getElementById('login-pw');
@@ -2845,6 +2847,8 @@ function changeFontSize(dir) {
     }
   } catch(e) {}
   _applyFontSize();
+  // 초기 화면이 로그인이면 스크롤 차단
+  document.body.style.overflow = 'hidden';
 })();
 // ─────────────────────────────────────────────────────────────
 
