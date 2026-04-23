@@ -1014,6 +1014,9 @@ function goTo(id) {
   window.scrollTo(0,0);
   // 로그인 화면일 때 body 스크롤 완전 차단, 다른 화면은 복원
   document.body.style.overflow = (id === 'screen-login') ? 'hidden' : '';
+  // 폰트 조절 버튼 — 로그인 화면에서만 표시
+  var _fontCtrl = document.querySelector('.font-size-ctrl');
+  if (_fontCtrl) _fontCtrl.style.display = (id === 'screen-login') ? 'flex' : 'none';
   if (id === 'screen-account') loadAccounts();
   if (id === 'screen-login') {
     var _pw = document.getElementById('login-pw');
@@ -2246,8 +2249,13 @@ window.addEventListener('popstate', function(e) {
     document.getElementById('exit-yes').onclick = function() {
       _exitConfirmShowing = false;
       document.body.removeChild(overlay);
-      try { window.close(); } catch(e2) {}
-      history.go(-999);
+      // Android PWA 종료 — 여러 방법 순차 시도
+      try { navigator.app.exitApp(); } catch(e) {}
+      try { window.close(); } catch(e) {}
+      try { history.go(-history.length); } catch(e) {}
+      setTimeout(function() {
+        try { window.location.replace('about:blank'); } catch(e) {}
+      }, 100);
     };
     document.getElementById('exit-no').onclick = function() {
       _exitConfirmShowing = false;
@@ -2851,6 +2859,9 @@ function changeFontSize(dir) {
   _applyFontSize();
   // 초기 화면이 로그인이면 스크롤 차단
   document.body.style.overflow = 'hidden';
+  // 초기 폰트 버튼 표시 (로그인 화면 기본값)
+  var _fc = document.querySelector('.font-size-ctrl');
+  if (_fc) _fc.style.display = 'flex';
 })();
 // ─────────────────────────────────────────────────────────────
 
